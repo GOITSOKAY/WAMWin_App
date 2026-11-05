@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self'; font-src 'self'; script-src 'self'; connect-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="no-referrer">
+  <title>WAMWins</title>
+  <meta name="description" content="WAMWins - smart solutions for your household kitchen, food and family needs.">
+  <meta name="theme-color" content="#0B49D1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="WAMWins">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="preload" href="assets/fonts/Poppins-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/Poppins-Bold.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <div id="app" aria-live="polite">
+    <div class="boot" role="status">
+      <picture class="brand-logo brand-logo--hero">
+        <source media="(min-width: 640px) and (min-height: 500px)" srcset="assets/brand/logo-desktop.png">
+        <img src="assets/brand/app-icon.png" alt="WAMWins" width="112" height="112">
+      </picture>
+      <p>Loading WAMWins…</p>
+    </div>
+  </div>
+  <div id="toast-region" class="toast-region" role="status" aria-live="polite"></div>
+  <noscript><p class="noscript">WAMWins needs JavaScript to run. Please enable it in your browser settings.</p></noscript>
+</body>
+</html>

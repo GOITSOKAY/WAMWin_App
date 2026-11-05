@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>WAMWins</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-content: center; text-align: center; gap: 12px;
+           font: 16px/1.5 "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; color: #0A2463; background: #E8EEF7; padding: 24px; }
+    a { color: #0B49D1; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <p>Opening WAMWins…</p>
+  <p><a id="home" href="/">Go to WAMWins</a></p>
+  <script>
+    // GitHub Pages shows this page for any unknown address. Send people to the app, whether it is
+    // published at the domain root (app.yourdomain.com/) or in a folder (username.github.io/repo/).
+    (async () => {
+      const first = location.pathname.split('/').filter(Boolean)[0];
+      const candidates = first ? ['/' + first + '/', '/'] : ['/'];
+      for (const base of candidates) {
+        try {
+          const r = await fetch(base + 'manifest.webmanifest', { method: 'HEAD', cache: 'no-store' });
+          if (r.ok) { document.getElementById('home').href = base; location.replace(base); return; }
+        } catch (e) {}
+      }
+    })();
+  </script>
+</body>
+</html>

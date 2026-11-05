@@ -1,0 +1,43 @@
+# =============================================================================
+# WAMWins - GitHub Pages site
+# Everything in this repository is published to the web. Keep it that way:
+# only the app's own files belong here.
+# =============================================================================
+
+# Operating-system clutter
+.DS_Store
+._*
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Secrets - this site needs none; never commit keys or passwords
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.keystore
+*.jks
+
+# Tooling output (not part of the website)
+node_modules/
+test-output/
+dist/
+*.log
+*.zip
+
+# WAMWins backup files contain (encrypted) household data - never publish them
+*.wambk
+
+# Do NOT ignore these - GitHub Pages needs them:
+#   CNAME      (your custom domain; GitHub creates it when you save the domain)
+#   .nojekyll  (publish files exactly as they are)
