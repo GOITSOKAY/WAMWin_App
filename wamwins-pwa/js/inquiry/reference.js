@@ -1188,7 +1188,8 @@ export const REF = {
   "CONSENT_MANAGEMENT",
   "DATA_EXPORT",
   "ACCOUNT_DELETION",
-  "DATA_BACKUP"
+  "DATA_BACKUP",
+  "CLOUD_BACKUP"
  ],
  "capabilityIds": {
   "HOUSEHOLD_MANAGEMENT": "b66dbb9b-993d-5615-8b54-dda2e7f4ec52",

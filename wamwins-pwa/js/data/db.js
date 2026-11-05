@@ -25,6 +25,13 @@ const MIGRATIONS = [
     s('local_mutation_outbox', 'client_mutation_id').createIndex('household_id', 'household_id');
     s('app_meta', 'key');
   },
+  /* v2: meal matching + meals (additive - existing stores and data are untouched) */
+  (db) => {
+    for (const name of ['match_run', 'match_run_member', 'match_result', 'match_result_factor', 'match_result_item', 'match_exclusion',
+                        'meal_record', 'meal_participant', 'consumption_record']) {
+      db.createObjectStore(name, { keyPath: 'id' }).createIndex('household_id', 'household_id');
+    }
+  },
 ];
 export const DB_VERSION = MIGRATIONS.length;
 

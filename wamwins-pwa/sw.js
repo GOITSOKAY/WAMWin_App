@@ -1,5 +1,5 @@
 /* WAMWins service worker: offline app shell (cache-first for versioned assets, network-first for the page). */
-const VERSION = 'wamwins-shell-v2';   // v2: new logos (bump on every release so installed apps update)
+const VERSION = 'wamwins-shell-v4';   // v2: new logos (bump on every release so installed apps update)
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'assets/brand/app-icon.png', 'assets/brand/logo-desktop.png', 'assets/brand/logo-desktop-compact.png', 'assets/icons/icon-192.png', 'assets/icons/icon-512.png', 'assets/icons/maskable-512.png', 'assets/icons/favicon-32.png',
@@ -10,6 +10,7 @@ const SHELL = [
   'js/screens/auth-layout.js', 'js/screens/welcome.js', 'js/screens/login.js', 'js/screens/register.js', 'js/screens/home.js', 'js/screens/settings.js',
   'js/screens/setup/setup.js', 'js/screens/setup/step-about.js', 'js/screens/setup/step-household.js', 'js/screens/setup/step-kitchens.js',
   'js/screens/setup/step-family.js', 'js/screens/setup/step-food.js', 'js/screens/setup/step-review.js',
+  'js/screens/match.js', 'js/matching/engine.js', 'js/matching/reference.js', 'js/matching/units.js', 'js/matching/inputs.js', 'js/matching/store.js',
 ];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL))); });
 self.addEventListener('activate', (e) => {

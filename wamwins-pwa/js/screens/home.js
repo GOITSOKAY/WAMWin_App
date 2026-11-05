@@ -2,6 +2,7 @@ import { h, icon, wordmark, brandLogo } from '../core/dom.js';
 import { loadHousehold } from '../inquiry/provisioning.js';
 import { tx } from '../data/db.js';
 import { REF } from '../inquiry/reference.js';
+import { canUse } from '../tier/capabilities.js';
 
 const greet = () => { const hr = new Date().getHours(); return hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening'; };
 const MODULE_NAMES = { HOUSEHOLD: 'Household', KITCHEN: 'Kitchens', EQUIPMENT: 'Appliances & tools', FAMILY: 'Family', HEALTH: 'Health & diet',
@@ -35,6 +36,11 @@ export async function mount(root, ctx) {
         ...d.allergies.filter(a => a.member_id === mem.id).map(a => h('span', { class: 'tag danger', text: `No ${allergenName(a.allergen_code).toLowerCase()}` })),
         ...d.diets.filter(a => a.member_id === mem.id).map(a => h('span', { class: 'tag blue', text: dietName(a.dietary_pattern_code) })))))));
   const ORDER = Object.keys(MODULE_NAMES);
+  const canMatch = d.members.length > 0 && await canUse(m.household_id, 'MEAL_MATCHING');      // capability, never "which tier?"
+  const matchCta = canMatch ? h('section', { class: 'match-cta' },
+    h('span', { class: 'ico' }, icon('chef')),
+    h('p', { text: 'Find meals that are safe for everyone and use what you have.' }),
+    h('button', { type: 'button', class: 'btn btn-primary', text: 'What can we cook?', onclick: () => ctx.go('match') })) : null;
   const mods = d.modules.filter(x => !x.resource_id && ORDER.includes(x.module_code)).sort((a, b) => ORDER.indexOf(a.module_code) - ORDER.indexOf(b.module_code));
 
   root.append(h('div', { class: 'frame' },
@@ -50,6 +56,7 @@ export async function mount(root, ctx) {
         h('div', {}, h('b', { text: d.storage.length }), h('span', { text: 'Storage units' })),
         h('div', {}, h('b', { text: d.members.length }), h('span', { text: 'Family members' })),
         h('div', {}, h('b', { text: d.items.length }), h('span', { text: 'Foods on hand' }))),
+      matchCta,
       h('div', { class: 'home-grid' },
         h('section', { class: 'panel', 'aria-labelledby': 'k-h' }, h('h2', { id: 'k-h', text: 'Your kitchens' }), explorer),
         h('div', { class: 'stack' },

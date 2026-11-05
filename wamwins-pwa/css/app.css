@@ -343,3 +343,28 @@ h1 .tm { font-size: 0.45em; color: inherit; }
   .welcome-title, .welcome-intro { text-align: center; }
   .welcome-intro { max-width: 34em; margin-inline: auto; }
 }
+
+/* =============================================================================
+   MEAL MATCHING
+   ============================================================================= */
+.match-cta { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: center; background: var(--yellow-50); border: 1.5px solid var(--yellow);
+  border-radius: var(--radius-m); padding: 16px; margin-bottom: 24px; color: var(--navy); }
+.match-cta .ico { width: 44px; height: 44px; border-radius: 12px; background: var(--yellow); display: grid; place-items: center; color: var(--navy); }
+.match-cta p { font-weight: 500; color: var(--navy); }
+.match-cta .btn { grid-column: 1 / -1; }
+@media (min-width: 640px) { .match-cta { grid-template-columns: 44px 1fr auto; } .match-cta .btn { grid-column: auto; } }
+:root[data-theme="dark"] .match-cta, :root[data-theme="dark"] .match-cta p { color: var(--navy); }
+.match-card { border: 1.5px solid var(--line); border-radius: var(--radius-m); padding: 16px; background: var(--surface); display: grid; gap: 6px; margin-top: 12px; }
+.match-card.best { border-color: var(--blue); }
+.match-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.match-head h3 { flex: 1; min-width: 60%; }
+.match-line { display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: start; font-size: var(--step-0); }
+.match-line svg { margin-top: 3px; }
+.match-line.ok svg { color: var(--ok); } .match-line.blue svg { color: var(--blue); } .match-line.soon svg { color: #8A6400; } .match-line.muted { color: var(--text-2); }
+:root[data-theme="dark"] .match-line.blue svg { color: #8FB0FF; } :root[data-theme="dark"] .match-line.soon svg { color: var(--yellow); }
+.match-actions { margin-top: 8px; }
+.cook-panel { display: grid; gap: 8px; border-top: 1px solid var(--line); padding-top: 10px; }
+.not-suggested { margin-top: 16px; }
+.excluded { display: grid; gap: 2px; padding: 8px 0; border-top: 1px dashed var(--line); }
+.excluded .danger { color: var(--danger); }
+.excluded span { font-size: var(--step--1); color: var(--text-2); }
