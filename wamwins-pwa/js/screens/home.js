@@ -12,7 +12,7 @@ export async function mount(root, ctx) {
   const m = (await tx(['household_membership'], 'readonly', t => t.byIndex('household_membership', 'user_id', ctx.user.id))).find(x => x.status === 'ACTIVE');
   if (!m) { ctx.go('setup/about', true); return { dispose() {} }; }
   const d = await loadHousehold(m.household_id);                      // one household, read once, released on leave
-  const itemName = (id) => REF.items.find(i => i.id === id)?.name ?? 'Food item';
+  const itemName = (it) => REF.items.find(i => i.id === it.item_master_id)?.name ?? it.label ?? 'Food item';   // built-in list, else the household's own food
   const allergenName = (c) => REF.allergens.find(a => a.code === c)?.name ?? c;
   const dietName = (c) => REF.dietaryPatterns.find(a => a.code === c)?.name ?? c;
 
@@ -25,7 +25,7 @@ export async function mount(root, ctx) {
         return h('details', {},
           h('summary', {}, icon('box', 18), h('span', { text: s.name }), h('span', { class: 'hint', text: items.length ? `${items.length} item${items.length > 1 ? 's' : ''}` : 'empty' }), h('span', { class: 'chev' }, icon('chev', 16))),
           d.sections.filter(x => x.storage_instance_id === s.id).sort((a, b) => a.ordinal - b.ordinal).map(x => h('div', { class: 'sec' }, h('span', { text: x.name }))),
-          items.map(it => h('div', { class: 'sec' }, h('span', { text: itemName(it.item_master_id) }), h('span', { text: `${it.quantity} ${(REF.units.find(u => u.code === it.unit_code)?.symbol) || ''}` }))));
+          items.map(it => h('div', { class: 'sec' }, h('span', { text: itemName(it) }), h('span', { text: `${it.quantity} ${(REF.units.find(u => u.code === it.unit_code)?.symbol) || ''}` }))));
       }) : h('p', { class: 'hint', text: 'No storage in this kitchen.' })));
   }));
   d.members.sort((a, b) => (b.linked_user_id === ctx.user.id) - (a.linked_user_id === ctx.user.id) || a.created_at.localeCompare(b.created_at));
@@ -37,6 +37,8 @@ export async function mount(root, ctx) {
         ...d.diets.filter(a => a.member_id === mem.id).map(a => h('span', { class: 'tag blue', text: dietName(a.dietary_pattern_code) })))))));
   const ORDER = Object.keys(MODULE_NAMES);
   const canMatch = d.members.length > 0 && await canUse(m.household_id, 'MEAL_MATCHING');      // capability, never "which tier?"
+  const inventoryBtn = (await canUse(m.household_id, 'MANUAL_INVENTORY'))
+    ? h('button', { type: 'button', class: 'btn btn-ghost btn-block inventory-btn', onclick: () => ctx.go('inventory') }, icon('box', 20), h('span', { text: 'Open inventory' })) : null;
   const matchCta = canMatch ? h('section', { class: 'match-cta' },
     h('span', { class: 'ico' }, icon('chef')),
     h('p', { text: 'Find meals that are safe for everyone and use what you have.' }),
@@ -56,6 +58,7 @@ export async function mount(root, ctx) {
         h('div', {}, h('b', { text: d.storage.length }), h('span', { text: 'Storage units' })),
         h('div', {}, h('b', { text: d.members.length }), h('span', { text: 'Family members' })),
         h('div', {}, h('b', { text: d.items.length }), h('span', { text: 'Foods on hand' }))),
+      inventoryBtn,
       matchCta,
       h('div', { class: 'home-grid' },
         h('section', { class: 'panel', 'aria-labelledby': 'k-h' }, h('h2', { id: 'k-h', text: 'Your kitchens' }), explorer),

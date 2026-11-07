@@ -1,0 +1,20 @@
+{
+  "description": "Vertical-slice household (tests/helpers.ts basicHousehold): Ana - severe PEANUT allergy; Ben - DAIRY_FREE (HARD), LOW_SODIUM (SOFT). Fixed date 2026-11-03.",
+  "must_exclude": {
+    "Tomato spaghetti": "TOO_MANY_MISSING",
+    "Vegetable omelette": "DIETARY",
+    "Peanut butter banana toast": "ALLERGEN",
+    "Shrimp in coconut milk": "TOO_MANY_MISSING",
+    "Roasted potato wedges": "EQUIPMENT"
+  },
+  "must_recommend": [
+    "Chicken adobo",
+    "Chicken and broccoli stir-fry",
+    "Garlic fried rice",
+    "Steamed tilapia with ginger",
+    "Tofu vegetable stir-fry"
+  ],
+  "must_never_recommend_ingredients_with_allergen": [
+    "PEANUT"
+  ]
+}

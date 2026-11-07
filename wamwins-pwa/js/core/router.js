@@ -8,6 +8,7 @@ const SCREENS = {
   home: () => import('../screens/home.js'),
   settings: () => import('../screens/settings.js'),
   match: () => import('../screens/match.js'),
+  inventory: () => import('../screens/inventory.js'),
 };
 export const PUBLIC = new Set(['welcome', 'login', 'register']);
 // Hosted single-file preview: navigation is kept in memory (the host page owns the URL fragment).

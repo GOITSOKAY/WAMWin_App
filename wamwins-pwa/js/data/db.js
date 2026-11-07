@@ -32,6 +32,10 @@ const MIGRATIONS = [
       db.createObjectStore(name, { keyPath: 'id' }).createIndex('household_id', 'household_id');
     }
   },
+  /* v3: the household's own foods (item_master rows with household_id set) and their allergens (additive) */
+  (db) => {
+    for (const name of ['item_master', 'item_allergen']) db.createObjectStore(name, { keyPath: 'id' }).createIndex('household_id', 'household_id');
+  },
 ];
 export const DB_VERSION = MIGRATIONS.length;
 

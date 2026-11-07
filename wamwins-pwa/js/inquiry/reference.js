@@ -708,6 +708,76 @@ export const REF = {
    "dimension": "ENERGY"
   }
  ],
+ "foodCategories": [
+  {
+   "code": "PROTEIN",
+   "name": "Protein foods"
+  },
+  {
+   "code": "POULTRY",
+   "name": "Poultry"
+  },
+  {
+   "code": "MEAT",
+   "name": "Meat"
+  },
+  {
+   "code": "SEAFOOD",
+   "name": "Fish & seafood"
+  },
+  {
+   "code": "EGGS",
+   "name": "Eggs"
+  },
+  {
+   "code": "LEGUMES",
+   "name": "Legumes & tofu"
+  },
+  {
+   "code": "DAIRY",
+   "name": "Dairy"
+  },
+  {
+   "code": "GRAINS",
+   "name": "Grains, rice, pasta & bread"
+  },
+  {
+   "code": "VEGETABLES",
+   "name": "Vegetables"
+  },
+  {
+   "code": "FRUITS",
+   "name": "Fruits"
+  },
+  {
+   "code": "CONDIMENTS",
+   "name": "Sauces & condiments"
+  },
+  {
+   "code": "OILS_FATS",
+   "name": "Oils & fats"
+  },
+  {
+   "code": "SPICES_HERBS",
+   "name": "Spices & herbs"
+  },
+  {
+   "code": "NUTS_SEEDS",
+   "name": "Nuts & seeds"
+  },
+  {
+   "code": "BEVERAGES",
+   "name": "Beverages"
+  },
+  {
+   "code": "SNACKS",
+   "name": "Snacks"
+  },
+  {
+   "code": "OTHER",
+   "name": "Other"
+  }
+ ],
  "items": [
   {
    "id": "67604b1b-00ea-5f48-bbab-96fcb2d3ff14",
@@ -719,7 +789,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 2,
-    "FROZEN": 270
+    "FROZEN": 270,
+    "OPENED": null
    }
   },
   {
@@ -732,7 +803,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 3,
-    "FROZEN": 180
+    "FROZEN": 180,
+    "OPENED": null
    }
   },
   {
@@ -745,7 +817,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 2,
-    "FROZEN": 120
+    "FROZEN": 120,
+    "OPENED": null
    }
   },
   {
@@ -760,7 +833,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 2,
-    "FROZEN": 180
+    "FROZEN": 180,
+    "OPENED": null
    }
   },
   {
@@ -775,7 +849,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 2,
-    "FROZEN": 180
+    "FROZEN": 180,
+    "OPENED": null
    }
   },
   {
@@ -790,7 +865,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 28,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -805,7 +881,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 7,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": 3
    }
   },
   {
@@ -820,7 +897,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 7,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": 5
    }
   },
   {
@@ -835,7 +913,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 30,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": 21
    }
   },
   {
@@ -850,7 +929,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 60,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -863,7 +943,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 365,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -879,7 +960,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 540,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -895,7 +977,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 5,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -908,7 +991,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 5,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -921,7 +1005,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 21,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -934,7 +1019,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 30,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -947,7 +1033,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 90,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -960,7 +1047,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 21,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -973,7 +1061,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 5,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -986,7 +1075,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 30,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -999,7 +1089,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": null,
     "CHILLED": 10,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -1012,7 +1103,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 5,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -1029,7 +1121,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 730,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -1044,7 +1137,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 730,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -1057,7 +1151,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 730,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -1070,7 +1165,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 540,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": 5
    }
   },
   {
@@ -1083,7 +1179,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 365,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": 3
    }
   },
   {
@@ -1096,7 +1193,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 540,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -1109,7 +1207,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 540,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -1124,7 +1223,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 180,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -1137,7 +1237,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 3650,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -1150,7 +1251,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 1095,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   },
   {
@@ -1163,7 +1265,8 @@ export const REF = {
    "shelfLife": {
     "AMBIENT": 730,
     "CHILLED": null,
-    "FROZEN": null
+    "FROZEN": null,
+    "OPENED": null
    }
   }
  ],

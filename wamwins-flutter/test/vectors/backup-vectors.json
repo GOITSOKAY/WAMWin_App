@@ -1,0 +1,58 @@
+{
+  "format": "WAMBK1",
+  "expected_plaintext_lines": [
+    "{\"type\":\"manifest\",\"formatVersion\":1,\"householdId\":\"11111111-2222-5333-8444-555555555555\",\"createdAt\":\"2026-11-05T00:00:00.000Z\",\"includeHealthData\":true,\"migrations\":[\"001_core/001_core.sql\"],\"tables\":[{\"name\":\"kitchen\",\"columns\":[\"id\",\"household_id\",\"name\"]},{\"name\":\"member_allergy\",\"columns\":[\"id\",\"household_id\",\"member_id\",\"allergen_code\"]}]}",
+    "{\"t\":0,\"r\":[\"k-1\",\"11111111-2222-5333-8444-555555555555\",\"Main kitchen ñ ✓\"]}",
+    "{\"t\":1,\"r\":[\"a-1\",\"11111111-2222-5333-8444-555555555555\",\"m-1\",\"PEANUT\"]}",
+    "{\"type\":\"end\",\"counts\":{\"kitchen\":1,\"member_allergy\":1},\"total\":2}"
+  ],
+  "vectors": [
+    {
+      "file": "device-key.wambk",
+      "key_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "expect": "DECRYPTS",
+      "sha256": "1e222261a4adcea21905badd0d7f094442c946b095c20ece372e1886f55d597e"
+    },
+    {
+      "file": "passphrase.wambk",
+      "passphrase": "correct horse battery staple",
+      "derived_key_hex": "48accd5e46943dd88593e81452a26ebc748d9daa457d14b6277d95d2666a9895",
+      "kdf": {
+        "name": "scrypt",
+        "N": 32768,
+        "r": 8,
+        "p": 1,
+        "dkLen": 32,
+        "normalize": "NFKC"
+      },
+      "expect": "DECRYPTS",
+      "sha256": "86374f11d78685c472023996cad92fe6d359c9b6c8c3e3140a63cf965efffcd4"
+    },
+    {
+      "file": "passphrase.wambk",
+      "passphrase": "wrong passphrase",
+      "expect": "INTEGRITY_FAILURE"
+    },
+    {
+      "file": "cloud-kms.wambk",
+      "key_hex": "1f1e1d1c1b1a191817161514131211100f0e0d0c0b0a09080706050403020100",
+      "header_key": {
+        "kind": "CLOUD_KMS",
+        "householdId": "11111111-2222-5333-8444-555555555555",
+        "keyVersion": 1
+      },
+      "expect": "DECRYPTS",
+      "sha256": "663fd0d3cf33046997812e325769ec2aafd35b37d26ce80553fe64707e718bef"
+    },
+    {
+      "file": "tampered-body.wambk",
+      "key_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "expect": "INTEGRITY_FAILURE"
+    },
+    {
+      "file": "tampered-header.wambk",
+      "key_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "expect": "INTEGRITY_FAILURE"
+    }
+  ]
+}

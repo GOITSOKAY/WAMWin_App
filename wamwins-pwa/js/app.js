@@ -29,7 +29,7 @@ async function render() {
     const user = await Auth.currentUser();
     if (!user && !PUBLIC.has(name)) return go('welcome', true);
     if (user && (PUBLIC.has(name) || !name || !hasScreen(name))) return go(await resumePath(user), true);
-    if (user && (name === 'home' || name === 'match') && (await resumePath(user)) !== 'home') return go(await resumePath(user), true);
+    if (user && (name === 'home' || name === 'match' || name === 'inventory') && (await resumePath(user)) !== 'home') return go(await resumePath(user), true);
     const mod = await loadScreen(name);
     if (id !== renderId) return;                                  // a newer navigation won
     current?.dispose?.();

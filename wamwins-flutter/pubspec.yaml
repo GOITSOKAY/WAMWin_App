@@ -1,0 +1,66 @@
+name: wamwins
+description: "WAMWins - Smart Solutions. Better Outcomes. Native app (Android, iOS) for WAM Digital."
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Bundled modern SQLite (>= 3.37 is required by the shared STRICT schema; many phones ship older).
+  sqlite3: ">=2.4.6 <3.0.0"
+  sqlite3_flutter_libs: ">=0.5.24 <0.6.0"
+  path_provider: ">=2.1.4 <3.0.0"
+  path: ">=1.9.0 <2.0.0"
+  # Session token and device keys live in the OS keystore (Android Keystore / iOS Keychain).
+  flutter_secure_storage: ">=9.2.2 <10.0.0"
+  # AES-256-GCM, scrypt, PBKDF2, SHA-256 (WAMBK1 backup format, password hashing).
+  pointycastle: ">=3.9.1 <4.0.0"
+  uuid: ">=4.4.2 <5.0.0"
+  # NFKC normalisation of passwords/passphrases, as on the web client.
+  unorm_dart: ">=0.2.0 <1.0.0"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ">=4.0.0 <6.0.0"
+  flutter_launcher_icons: ">=0.13.1 <1.0.0"
+  flutter_native_splash: ">=2.4.0 <3.0.0"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/brand/
+    - assets/db/migrations/
+    - assets/db/modules/
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+
+# dart run flutter_launcher_icons   (app icon from the supplied mobile app-icon artwork)
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/launcher/icon.png
+  adaptive_icon_background: "#0043D5"
+  adaptive_icon_foreground: assets/launcher/icon.png
+  remove_alpha_ios: true
+
+# dart run flutter_native_splash:create
+flutter_native_splash:
+  color: "#0B49D1"
+  image: assets/launcher/splash-logo.png
+  android_12:
+    color: "#0B49D1"
+    image: assets/launcher/splash-logo.png

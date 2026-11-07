@@ -6,7 +6,7 @@ import { startBasic, invalidate } from '../tier/capabilities.js';
 
 const STORES = ['household', 'household_membership', 'subscription', 'subscription_entitlement', 'questionnaire_session', 'answer',
   'kitchen', 'storage_instance', 'storage_section', 'household_appliance', 'household_cookware', 'household_utensil', 'family_member',
-  'member_allergy', 'member_dietary_requirement', 'member_health_food_requirement', 'member_preference', 'inventory_item',
+  'member_allergy', 'member_dietary_requirement', 'member_health_food_requirement', 'member_preference', 'inventory_item', 'item_master', 'item_allergen',
   'inventory_transaction', 'household_module_instance', 'provisioning_record', 'local_mutation_outbox', 'consent_record', 'user_account'];
 
 /** Step 2: the household record (+ owner membership + WAMWins Basic entitlements). Idempotent. */
@@ -102,6 +102,17 @@ export async function provision(user, session, draft) {
       await replace('member_preference', (m.cuisines || []).map(code => ({ preference_kind: 'LIKE', subject_type: 'CUISINE', cuisine_code: code, strength: 3 })));
     }
 
+    // The household's own foods -> item_master rows with household_id set (same table as the built-in list) + allergens
+    for (const f of draft.food.filter(x => x.custom)) {
+      await once(`item:${f.itemId}`, 'item_master', async () => {
+        await t.insert('item_master', { id: f.itemId, household_id: hh, item_kind: 'FOOD', canonical_name: f.name, display_name: null, search_name: f.name.toLowerCase(),
+          food_category_code: f.custom.category || 'OTHER', default_unit_code: f.custom.unit, storage_zone: f.custom.zone || 'ANY',
+          is_perishable: f.custom.zone === 'CHILLED' || f.custom.zone === 'FROZEN', is_verified: false, created_source_code: 'MANUAL', deleted_at: null });
+        for (const code of f.custom.allergens || [])
+          await t.insert('item_allergen', { id: `${f.itemId}|${code}`, household_id: hh, item_master_id: f.itemId, allergen_code: code, presence: 'CONTAINS' });
+        return f.itemId;
+      });
+    }
     // Food on hand -> inventory item (created at 0) + opening MANUAL_ADD transaction (ledger rule)
     for (const f of draft.food) {
       const storageId = storageIds.get(f.storageKey);

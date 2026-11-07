@@ -1,5 +1,6 @@
 import { h, clear, icon, field } from '../../core/dom.js';
 import { REF } from '../../inquiry/reference.js';
+import { newFoodForm } from '../../inventory/new-food-form.js';
 import { Q, kitchenList, storageList } from '../../inquiry/draft.js';
 
 export function create({ draft, refresh }) {
@@ -12,20 +13,41 @@ export function create({ draft, refresh }) {
   const results = h('div', { class: 'search-results', role: 'listbox', 'aria-label': 'Matching foods', hidden: true });
   const rows = h('div');
   const updateLabel = () => {};
+  // The household's own foods defined so far (they travel with the food answers and become item_master rows).
+  const myFoods = () => [...new Map(draft.food.filter(f => f.custom).map(f => [f.itemId, { id: f.itemId, name: f.name, unit: f.custom.unit, zone: f.custom.zone, mine: true }])).values()];
   search.oninput = () => {
-    const q = search.value.trim().toLowerCase();
+    const raw = search.value.trim(), q = raw.toLowerCase();
     clear(results);
     if (!q) { results.hidden = true; return; }
-    const hits = REF.items.filter(i => i.name.toLowerCase().includes(q)).slice(0, 8);
+    const hits = [...myFoods(), ...REF.items].filter(i => i.name.toLowerCase().includes(q)).slice(0, 8);
     results.hidden = false;
-    if (!hits.length) results.append(h('p', { class: 'hint', style: { padding: '12px' }, text: `No match for “${search.value.trim()}”. You can add your own foods after setup.` }));
     for (const i of hits) results.append(h('button', { type: 'button', role: 'option', onclick: () => add(i) },
-      h('span', { text: i.name }), h('span', { class: 'hint', text: i.zone === 'ANY' ? '' : i.zone.toLowerCase() })));
+      h('span', { text: i.name }), h('span', { class: 'hint', text: i.mine ? 'your food' : i.zone === 'ANY' ? '' : i.zone.toLowerCase() })));
+    if (!hits.some(i => i.name.toLowerCase() === q)) {
+      if (!hits.length) results.append(h('p', { class: 'hint', style: { padding: '12px 12px 0' }, text: `“${raw}” isn’t in the WAMWins list yet.` }));
+      results.append(h('button', { type: 'button', role: 'option', class: 'add-new', onclick: () => openCustom(raw) },
+        icon('plus', 18), h('span', { text: `Add “${raw}” as a new food` })));
+    }
   };
-  function add(item) {
+  function add(item, custom) {
     const start = { G: 500, ML: 500, KG: 1, L: 1 }[item.unit] ?? 1;                // a realistic starting amount for the unit
-    draft.food.push({ key: crypto.randomUUID(), itemId: item.id, name: item.name, storageKey: place, quantity: start, unit: item.unit, expiresOn: '' });
-    search.value = ''; results.hidden = true; clear(results); render(); refresh(); search.focus();
+    const mine = custom ?? draft.food.find(f => f.itemId === item.id && f.custom)?.custom;
+    draft.food.push({ key: crypto.randomUUID(), itemId: item.id, name: item.name, storageKey: place, quantity: start, unit: item.unit, expiresOn: '', ...(mine ? { custom: mine } : {}) });
+    search.value = ''; results.hidden = true; clear(results); customPanel.hidden = true; clear(customPanel); render(); refresh(); search.focus();
+  }
+
+  // "Add a new food" (shared form, also used by the Inventory screen)
+  const customPanel = h('div', { hidden: true });
+  function openCustom(name) {
+    clear(customPanel); customPanel.hidden = false; results.hidden = true;
+    const placeZone = places.find(p => p.key === place)?.zone;
+    customPanel.append(newFoodForm({ initial: { name, zone: ['CHILLED', 'FROZEN'].includes(placeZone) ? placeZone : 'AMBIENT' },
+      onSave: ({ name: n, category, unit, zone, allergens }) => {
+        const known = [...myFoods(), ...REF.items].find(i => i.name.toLowerCase() === n.toLowerCase());
+        if (known) return add(known);                                               // already listed: use that food, no duplicate
+        add({ id: crypto.randomUUID(), name: n, unit }, { category, unit, zone, allergens });
+      },
+      onCancel: () => { customPanel.hidden = true; clear(customPanel); search.focus(); } }));
   }
   function render() {
     clear(rows);
@@ -50,7 +72,7 @@ export function create({ draft, refresh }) {
     el: h('div', {},
       h('section', { class: 'q-block' },
         field({ label: 'Where is it kept?', input: select }),
-        h('div', { class: 'field' }, h('label', { class: 'label', for: 'food-search', text: 'Add food' }), Object.assign(search, { id: 'food-search' }), results)),
+        h('div', { class: 'field' }, h('label', { class: 'label', for: 'food-search', text: 'Add food' }), Object.assign(search, { id: 'food-search' }), results), customPanel),
       h('section', { class: 'q-block' }, h('h2', { text: 'Food you’re adding' }), rows)),
     nextLabel: () => (draft.food.length ? 'Continue' : 'Skip for now'),
     validate: () => draft.food.some(f => !(f.quantity > 0)) ? 'Each food needs an amount greater than zero.' : null,

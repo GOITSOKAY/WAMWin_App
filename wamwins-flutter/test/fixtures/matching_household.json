@@ -1,0 +1,28 @@
+{
+  "description": "The vertical-slice household used to generate conformance/vectors/matching-scenario.json (tests/helpers.ts basicHousehold).",
+  "today": "2026-11-03",
+  "kitchen": { "name": "Main kitchen", "type": "MAIN" },
+  "storage": [
+    { "key": "fridge", "type": "REFRIGERATOR", "name": "Main refrigerator", "zone": "CHILLED" },
+    { "key": "pantry", "type": "PANTRY", "name": "Pantry", "zone": "AMBIENT" }
+  ],
+  "equipment": [["household_appliance", "STOVETOP"], ["household_appliance", "RICE_COOKER"], ["household_cookware", "WOK"]],
+  "inventory": [
+    { "item": "Chicken breast", "qty": 600, "storage": "fridge", "expiresOn": "2026-11-05" },
+    { "item": "Broccoli", "qty": 300, "storage": "fridge" },
+    { "item": "Soy sauce", "qty": 500, "storage": "fridge" },
+    { "item": "Cane vinegar", "qty": 500, "storage": "pantry" },
+    { "item": "Garlic", "qty": 12, "storage": "pantry" },
+    { "item": "Bay leaves", "qty": 10, "storage": "pantry" },
+    { "item": "Black pepper", "qty": 50, "storage": "pantry" },
+    { "item": "Vegetable oil", "qty": 1000, "storage": "pantry" },
+    { "item": "White rice", "qty": 2000, "storage": "pantry" },
+    { "item": "Peanut butter", "qty": 340, "storage": "pantry" },
+    { "item": "Sliced bread", "qty": 12, "storage": "pantry" },
+    { "item": "Banana", "qty": 4, "storage": "pantry" }
+  ],
+  "members": [
+    { "key": "ana", "name": "Ana", "relationship": "CHILD", "ageBand": "CHILD", "allergies": ["PEANUT"], "diets": [], "health": [] },
+    { "key": "ben", "name": "Ben", "relationship": "SELF", "ageBand": "ADULT", "allergies": [], "diets": ["DAIRY_FREE"], "health": ["LOW_SODIUM"] }
+  ]
+}
