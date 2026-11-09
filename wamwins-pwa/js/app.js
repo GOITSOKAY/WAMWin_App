@@ -1,3 +1,4 @@
+import { V1_STEP_MAP } from './inquiry/step-map.js';
 import { h, clear, brandLogo } from './core/dom.js';
 import { parse, go, loadScreen, hasScreen, PUBLIC, canGoBack, NAV_EVENT } from './core/router.js';
 import { Auth } from './security/auth.js';
@@ -19,7 +20,8 @@ async function resumePath(user) {
     [await t.byIndex('questionnaire_session', 'user_id', user.id), await t.byIndex('household_membership', 'user_id', user.id)]);
   if (memberships.some(m => m.status === 'ACTIVE') && sessions.some(s => s.status === 'COMPLETED')) return 'home';
   const open = sessions.find(s => s.status === 'IN_PROGRESS');
-  return `setup/${open?.current_step || 'about'}`;
+  const step = open?.current_step || 'about';
+  return `setup/${(open?.questionnaire_version ?? 1) < 2 ? (V1_STEP_MAP[step] ?? 'about') : step}`;   // v1 sessions resume in v2
 }
 
 async function render() {

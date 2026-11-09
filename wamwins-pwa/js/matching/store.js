@@ -1,8 +1,9 @@
 import { tx } from '../data/db.js';
+import { REF } from '../inquiry/reference.js';
 
 // Browser persistence for matching and meals (same tables and columns as the shared database; IndexedDB v2).
 const HH_STORES = ['family_member', 'member_allergy', 'member_dietary_requirement', 'member_health_food_requirement', 'member_preference',
-  'inventory_item', 'household_appliance', 'household_cookware', 'household_utensil'];
+  'inventory_item', 'household_appliance', 'household_cookware', 'household_utensil', 'household_kitchenware', 'member_intolerance'];
 const RUN_STORES = ['match_run', 'match_run_member', 'match_result', 'match_result_factor', 'match_result_item', 'match_exclusion', 'local_mutation_outbox'];
 const MEAL_STORES = ['meal_record', 'meal_participant', 'consumption_record', 'inventory_item', 'inventory_transaction', 'match_result', 'match_run_member', 'local_mutation_outbox'];
 const round4 = (v) => Math.round(v * 10000) / 10000;
@@ -16,7 +17,11 @@ export async function loadSnapshot(hh) {
   });
   return { members: rows.family_member, allergies: rows.member_allergy, diets: rows.member_dietary_requirement,
     healthRequirements: rows.member_health_food_requirement, preferences: rows.member_preference, inventory: rows.inventory_item,
-    equipment: [...rows.household_appliance, ...rows.household_cookware, ...rows.household_utensil], intolerances: [] };
+    // kitchenware (Entry v2) counts as equipment through its equipment type, like the database cooking-capability view
+    equipment: [...rows.household_appliance, ...rows.household_cookware, ...rows.household_utensil,
+      ...rows.household_kitchenware.map(w => ({ ...w, equipment_type_code: REF.kitchenwareTypes.find(t => t.code === w.kitchenware_type_code)?.equipment_type_code ?? null }))
+        .filter(w => w.equipment_type_code)],
+    intolerances: rows.member_intolerance };
 }
 
 /** Persist an explainable run (unsafe recipes are never stored as recommendations). */

@@ -41,6 +41,13 @@ Future<void> main() async {
   patch('android/app/src/main/AndroidManifest.xml', RegExp(r'android:label="[^"]*"'), 'android:label="WAMWins"', 'Android app name');
   patch('ios/Runner/Info.plist', RegExp(r'(<key>CFBundleDisplayName</key>\s*<string>)[^<]*(</string>)'), r'$1WAMWins$2', 'iOS display name');
   patch('ios/Runner/Info.plist', RegExp(r'(<key>CFBundleName</key>\s*<string>)[^<]*(</string>)'), r'$1WAMWins$2', 'iOS bundle name');
+  // reference photos: iOS asks permission with these explanations (camera and photo library)
+  final plist = File('ios/Runner/Info.plist');
+  if (plist.existsSync() && !plist.readAsStringSync().contains('NSCameraUsageDescription')) {
+    plist.writeAsStringSync(plist.readAsStringSync().replaceFirst('<dict>', '<dict>\n\t<key>NSCameraUsageDescription</key>\n\t<string>Take reference photos of your kitchen and storage. WAMWins does not analyze them.</string>'
+        '\n\t<key>NSPhotoLibraryUsageDescription</key>\n\t<string>Choose reference photos of your kitchen and storage. WAMWins does not analyze them.</string>'));
+    stdout.writeln('    set: iOS camera and photo library permission texts');
+  }
   await step('Downloading packages', 'flutter', ['pub', 'get']);
   await step('Making the app icon', 'dart', ['run', 'flutter_launcher_icons'], optional: true);
   await step('Making the splash screen', 'dart', ['run', 'flutter_native_splash:create'], optional: true);

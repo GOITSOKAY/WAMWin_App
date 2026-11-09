@@ -10,7 +10,7 @@ const db = new DatabaseSync(':memory:'); db.exec('PRAGMA foreign_keys = ON');
 for (const f of readdirSync(mig).sort()) db.exec(readFileSync(join(mig, f), 'utf8'));
 const walk = (d) => readdirSync(d).flatMap(f => statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]);
 // Sample values for Dart interpolations: placeholder lists (_ph(n), $m, $p) become one '?', limits become numbers.
-const SAMPLE = { table: 'household_appliance', cls: 'APPLIANCE', m: '?', p: '?', maxCandidates: '200', where: "i.household_id = ? AND i.deleted_at IS NULL AND i.quantity > 0 AND lower(COALESCE(m.canonical_name, i.label)) LIKE ? AND i.use_soon_on <= ?" };
+const SAMPLE = { t: 'member_food_rule', table: 'household_appliance', cls: 'APPLIANCE', m: '?', p: '?', maxCandidates: '200', where: "i.household_id = ? AND i.deleted_at IS NULL AND i.quantity > 0 AND lower(COALESCE(m.canonical_name, i.label)) LIKE ? AND i.use_soon_on <= ?" };
 let checked = 0, failed = 0;
 for (const file of walk(lib).filter(f => f.endsWith('.dart'))) {
   const src = readFileSync(file, 'utf8');

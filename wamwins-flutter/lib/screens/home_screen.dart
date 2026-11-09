@@ -144,7 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
           title: Row(children: [const BrandLogo(kind: LogoKind.bar), if (!isLargeScreen(context)) ...[const SizedBox(width: 10), const Wordmark(size: 20)]]),
           actions: [IconButton(tooltip: 'Settings', icon: const Icon(Icons.settings_outlined), onPressed: () => s.router.go('settings'))]),
       body: ListView(padding: const EdgeInsets.fromLTRB(20, 20, 20, 32), children: [ContentWidth(max: 1120, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Semantics(header: true, child: Text('$_greeting, $first', style: Theme.of(context).textTheme.headlineMedium)),
+        Text('$_greeting, $first', style: TextStyle(color: p.text2, fontWeight: FontWeight.w500)),
+        Semantics(header: true, child: Text('Here is what WAMWins knows about your kitchen stuff!', style: Theme.of(context).textTheme.headlineMedium)),
         const SizedBox(height: 4),
         Text('${d.household['name']} is set up. Here’s what WAMWins knows about your home.', style: TextStyle(color: p.text2)),
         const SizedBox(height: 20),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../core/db.dart';
+import '../inquiry/profile_store.dart';
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
 import '../screens/inventory_screen.dart';
@@ -70,7 +71,7 @@ class _RootViewState extends State<RootView> {
 
   String _resume(DbRow user) {
     final id = user['id'] as String;
-    return s.profile.isComplete(id) ? 'home' : 'setup/${s.profile.currentStep(id)}';
+    return s.profile.isComplete(id) ? 'home' : 'setup/${s.profile.currentStepV2(id)}';      // v1 steps resume in v2 modules
   }
 
   Future<void> _resolve() async {

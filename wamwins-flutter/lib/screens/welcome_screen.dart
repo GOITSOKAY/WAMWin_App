@@ -28,17 +28,25 @@ class WelcomeScreen extends StatelessWidget {
         );
     return AuthLayout(children: [
       Semantics(header: true, child: tmTitle(context, 'Welcome to WAMWins', align: align)),
+      const SizedBox(height: 10),
+      // order: title -> install status -> intro -> points -> Create Account -> Log In -> privacy (in the native app it is installed already)
+      Semantics(liveRegion: true, child: Row(mainAxisAlignment: centered ? MainAxisAlignment.center : MainAxisAlignment.start, children: [
+        Icon(Icons.check_circle_outline, size: 18, color: p.ok), const SizedBox(width: 8),
+        Text('WAMWins is installed on this device', style: TextStyle(color: p.ok, fontWeight: FontWeight.w500)),
+      ])),
       const SizedBox(height: 12),
-      Text('Tell us about your household, kitchens and family once. WAMWins uses your answers to suggest meals that are safe for everyone and use what you already have.',
+      Text('WAMWins helps organize your household resources, understand family needs, and match what you already have with practical solutions.',
           textAlign: align, style: TextStyle(color: p.text2)),
+      const SizedBox(height: 8),
+      Text('WAMWins Basic starts with your household, family, kitchen, food and meal matching.', textAlign: align, style: TextStyle(color: p.text2)),
       const SizedBox(height: 20),
       point(Icons.groups_outlined, false, 'Built around your family', 'Allergies and diets are checked before anything is suggested.'),
-      point(Icons.inventory_2_outlined, true, 'Only what you really have', 'Your kitchens, storage and tools, set up exactly as they are at home.'),
-      point(Icons.wifi_off_rounded, false, 'Works without internet', 'Everything is saved on this device and stays available offline.'),
+      point(Icons.inventory_2_outlined, true, 'Only what you really have', 'Your kitchens, storage, appliances and food, set up exactly as they are at home.'),
+      point(Icons.wifi_off_rounded, false, 'Works without internet', 'Your entries stay available offline on this device. Signing in on your other devices comes with WAMWins online accounts.'),
       const SizedBox(height: 8),
-      PrimaryButton(label: 'Create account', onPressed: () => s.router.go('register')),
+      PrimaryButton(label: 'Create Account', onPressed: () => s.router.go('register')),
       const SizedBox(height: 10),
-      GhostButton(onPressed: () => s.router.go('login'), child: const Text('Log in')),
+      GhostButton(onPressed: () => s.router.go('login'), child: const Text('Log In')),
       const SizedBox(height: 18),
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Icon(Icons.verified_user_outlined, size: 18, color: p.ok),

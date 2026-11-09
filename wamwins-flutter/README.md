@@ -4,7 +4,8 @@ The native WAMWins app, built with Flutter and Dart. It is the **same system** a
 not a separate product: same database files, same questions and rules, same brand, same backup format
 (see `../docs/CLIENT_CONFORMANCE.md`).
 
-**What it does today:** Welcome → Create account / Log in → five profiling steps (About you, Your household,
+**What it does today:** Entry Module v2 (seven modules: About You, Health Profiles, Kitchens & Storages, Kitchen Appliances, Utensils &
+Kitchenware, Food Inventories, Review My Household Entries → **Save Entries**), then: Welcome → Create account / Log in → five profiling steps (About you, Your household,
 Kitchens & equipment, Family & health, Food on hand) → Review → Home → **What can we cook?** (safety-first
 meal matching for the people you choose, with reasons) → **Cook this** (records the meal and takes the
 ingredients out of inventory) → **Inventory** (add food from the list, your own foods or a new one; use, add more, throw away,

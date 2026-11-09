@@ -36,6 +36,12 @@ const MIGRATIONS = [
   (db) => {
     for (const name of ['item_master', 'item_allergen']) db.createObjectStore(name, { keyPath: 'id' }).createIndex('household_id', 'household_id');
   },
+  /* v4: Entry Module v2 - intolerances, food rules (avoid/prioritize per meal), kitchenware, manual reference photos
+     (metadata in location_media, image bytes in media_blob). Additive: existing stores and rows are untouched. */
+  (db) => {
+    for (const name of ['member_intolerance', 'member_food_rule', 'household_kitchenware', 'household_container', 'location_media', 'media_blob'])
+      db.createObjectStore(name, { keyPath: 'id' }).createIndex('household_id', 'household_id');
+  },
 ];
 export const DB_VERSION = MIGRATIONS.length;
 

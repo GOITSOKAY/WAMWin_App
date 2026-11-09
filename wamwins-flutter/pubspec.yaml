@@ -20,6 +20,9 @@ dependencies:
   # AES-256-GCM, scrypt, PBKDF2, SHA-256 (WAMBK1 backup format, password hashing).
   pointycastle: ">=3.9.1 <4.0.0"
   uuid: ">=4.4.2 <5.0.0"
+  # Manual reference photos (Basic): take/choose a photo, and save/share it. Never analyzed.
+  image_picker: ">=1.1.2 <2.0.0"
+  share_plus: ">=10.0.0 <12.0.0"
   # NFKC normalisation of passwords/passphrases, as on the web client.
   unorm_dart: ">=0.2.0 <1.0.0"
 

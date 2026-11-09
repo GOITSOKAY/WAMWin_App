@@ -7,7 +7,7 @@ const listeners = new Set();
 export function installState() {
   const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) && !standalone && !isNative();
-  return { canPrompt: !!deferred && !standalone && !isNative(), ios,
+  return { canPrompt: !!deferred && !standalone && !isNative(), ios, standalone: standalone || isNative(),
     prompt: async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice; deferred = null; listeners.forEach(f => f()); } };
 }
 export function onInstallChange(f) { listeners.add(f); return () => listeners.delete(f); }

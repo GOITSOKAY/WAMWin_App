@@ -172,67 +172,116 @@ export const REF = {
   {
    "code": "REFRIGERATOR",
    "name": "Refrigerator",
-   "temperature_zone": "CHILLED"
+   "temperature_zone": "CHILLED",
+   "is_appliance_backed": true
+  },
+  {
+   "code": "REFRIGERATOR_FREEZER",
+   "name": "Refrigerator freezer section",
+   "temperature_zone": "FROZEN",
+   "is_appliance_backed": true
   },
   {
    "code": "FREEZER",
-   "name": "Freezer",
-   "temperature_zone": "FROZEN"
+   "name": "Upright freezer",
+   "temperature_zone": "FROZEN",
+   "is_appliance_backed": true
   },
   {
    "code": "CHEST_FREEZER",
    "name": "Chest freezer",
-   "temperature_zone": "FROZEN"
+   "temperature_zone": "FROZEN",
+   "is_appliance_backed": true
   },
   {
    "code": "PANTRY",
    "name": "Pantry",
-   "temperature_zone": "AMBIENT"
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
+  },
+  {
+   "code": "WALK_IN_PANTRY",
+   "name": "Walk-in pantry",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
   },
   {
    "code": "HANGING_CABINET",
-   "name": "Hanging cabinet",
-   "temperature_zone": "AMBIENT"
+   "name": "Wall / Hanging Cabinet",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
   },
   {
    "code": "GROUND_CABINET",
-   "name": "Ground cabinet",
-   "temperature_zone": "AMBIENT"
+   "name": "Base / Ground Cabinet",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
+  },
+  {
+   "code": "TALL_CABINET",
+   "name": "Tall Cabinet",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
   },
   {
    "code": "UNDER_SINK_CABINET",
-   "name": "Under-sink cabinet",
-   "temperature_zone": "AMBIENT"
+   "name": "Under-Sink Cabinet",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
   },
   {
    "code": "STANDALONE_CABINET",
-   "name": "Standalone cabinet",
-   "temperature_zone": "AMBIENT"
+   "name": "Standalone Cabinet",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
   },
   {
    "code": "ISLAND_CABINET",
-   "name": "Island cabinet",
-   "temperature_zone": "AMBIENT"
+   "name": "Kitchen Island Storage",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
   },
   {
-   "code": "COUNTERTOP",
-   "name": "Countertop",
-   "temperature_zone": "AMBIENT"
+   "code": "DRAWER",
+   "name": "Drawer",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
   },
   {
    "code": "OPEN_SHELF",
-   "name": "Open shelf",
-   "temperature_zone": "AMBIENT"
+   "name": "Open Shelf",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
+  },
+  {
+   "code": "SHELVING_UNIT",
+   "name": "Shelving Unit",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
   },
   {
    "code": "SPICE_RACK",
-   "name": "Spice rack",
-   "temperature_zone": "AMBIENT"
+   "name": "Spice Rack",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
+  },
+  {
+   "code": "COUNTERTOP",
+   "name": "Countertop Storage",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
   },
   {
    "code": "UTILITY_STORAGE",
-   "name": "Utility storage",
-   "temperature_zone": "AMBIENT"
+   "name": "Utility Storage",
+   "temperature_zone": "AMBIENT",
+   "is_appliance_backed": false
+  },
+  {
+   "code": "CUSTOM",
+   "name": "Custom Storage",
+   "temperature_zone": "MIXED",
+   "is_appliance_backed": false
   }
  ],
  "sectionTemplates": [
@@ -397,187 +446,1048 @@ export const REF = {
   {
    "code": "REFRIGERATOR",
    "equipment_class": "APPLIANCE",
-   "name": "Refrigerator"
+   "name": "Refrigerator",
+   "power_source": "ELECTRIC",
+   "size_rank": 1,
+   "provides_storage_type_code": "REFRIGERATOR"
   },
   {
    "code": "UPRIGHT_FREEZER",
    "equipment_class": "APPLIANCE",
-   "name": "Upright freezer"
+   "name": "Freezer",
+   "power_source": "ELECTRIC",
+   "size_rank": 2,
+   "provides_storage_type_code": "FREEZER"
   },
   {
    "code": "CHEST_FREEZER",
    "equipment_class": "APPLIANCE",
-   "name": "Chest freezer"
+   "name": "Chest freezer",
+   "power_source": "ELECTRIC",
+   "size_rank": 3,
+   "provides_storage_type_code": "CHEST_FREEZER"
   },
   {
    "code": "STOVETOP",
    "equipment_class": "APPLIANCE",
-   "name": "Stovetop / burner"
+   "name": "Cooktop",
+   "power_source": "ELECTRIC",
+   "size_rank": 5,
+   "provides_storage_type_code": null
   },
   {
    "code": "OVEN",
    "equipment_class": "APPLIANCE",
-   "name": "Oven"
+   "name": "Wall oven",
+   "power_source": "ELECTRIC",
+   "size_rank": 6,
+   "provides_storage_type_code": null
   },
   {
    "code": "MICROWAVE",
    "equipment_class": "APPLIANCE",
-   "name": "Microwave"
+   "name": "Microwave",
+   "power_source": "ELECTRIC",
+   "size_rank": 10,
+   "provides_storage_type_code": null
   },
   {
    "code": "RICE_COOKER",
    "equipment_class": "APPLIANCE",
-   "name": "Rice cooker"
+   "name": "Rice cooker",
+   "power_source": "ELECTRIC",
+   "size_rank": 18,
+   "provides_storage_type_code": null
   },
   {
    "code": "AIR_FRYER",
    "equipment_class": "APPLIANCE",
-   "name": "Air fryer"
+   "name": "Air fryer",
+   "power_source": "ELECTRIC",
+   "size_rank": 15,
+   "provides_storage_type_code": null
   },
   {
    "code": "BLENDER",
    "equipment_class": "APPLIANCE",
-   "name": "Blender"
+   "name": "Blender",
+   "power_source": "ELECTRIC",
+   "size_rank": 20,
+   "provides_storage_type_code": null
   },
   {
    "code": "PRESSURE_COOKER",
    "equipment_class": "APPLIANCE",
-   "name": "Pressure cooker"
+   "name": "Pressure cooker",
+   "power_source": "ELECTRIC",
+   "size_rank": 17,
+   "provides_storage_type_code": null
   },
   {
    "code": "SLOW_COOKER",
    "equipment_class": "APPLIANCE",
-   "name": "Slow cooker"
+   "name": "Slow cooker",
+   "power_source": "ELECTRIC",
+   "size_rank": 16,
+   "provides_storage_type_code": null
   },
   {
    "code": "OUTDOOR_GRILL",
    "equipment_class": "APPLIANCE",
-   "name": "Outdoor grill"
+   "name": "Outdoor grill",
+   "power_source": "GAS",
+   "size_rank": 26,
+   "provides_storage_type_code": null
   },
   {
    "code": "TOASTER",
    "equipment_class": "APPLIANCE",
-   "name": "Toaster"
+   "name": "Toaster",
+   "power_source": "ELECTRIC",
+   "size_rank": 24,
+   "provides_storage_type_code": null
   },
   {
    "code": "KETTLE",
    "equipment_class": "APPLIANCE",
-   "name": "Electric kettle"
+   "name": "Electric kettle",
+   "power_source": "ELECTRIC",
+   "size_rank": 25,
+   "provides_storage_type_code": null
   },
   {
    "code": "FRYING_PAN",
    "equipment_class": "COOKWARE",
-   "name": "Frying pan"
+   "name": "Frying pan",
+   "provides_storage_type_code": null
   },
   {
    "code": "WOK",
    "equipment_class": "COOKWARE",
-   "name": "Wok"
+   "name": "Wok",
+   "provides_storage_type_code": null
   },
   {
    "code": "SAUCEPAN",
    "equipment_class": "COOKWARE",
-   "name": "Saucepan"
+   "name": "Saucepan",
+   "provides_storage_type_code": null
   },
   {
    "code": "STOCK_POT",
    "equipment_class": "COOKWARE",
-   "name": "Stock pot"
+   "name": "Stock pot",
+   "provides_storage_type_code": null
   },
   {
    "code": "BAKING_SHEET",
    "equipment_class": "COOKWARE",
-   "name": "Baking sheet"
+   "name": "Baking sheet",
+   "provides_storage_type_code": null
   },
   {
    "code": "CASSEROLE_DISH",
    "equipment_class": "COOKWARE",
-   "name": "Casserole dish"
+   "name": "Casserole dish",
+   "provides_storage_type_code": null
   },
   {
    "code": "STEAMER_BASKET",
    "equipment_class": "COOKWARE",
-   "name": "Steamer basket"
+   "name": "Steamer basket",
+   "provides_storage_type_code": null
   },
   {
    "code": "CHEFS_KNIFE",
    "equipment_class": "UTENSIL",
-   "name": "Chef's knife"
+   "name": "Chef's knife",
+   "provides_storage_type_code": null
   },
   {
    "code": "CUTTING_BOARD",
    "equipment_class": "UTENSIL",
-   "name": "Cutting board"
+   "name": "Cutting board",
+   "provides_storage_type_code": null
   },
   {
    "code": "SPATULA",
    "equipment_class": "UTENSIL",
-   "name": "Spatula"
+   "name": "Spatula",
+   "provides_storage_type_code": null
   },
   {
    "code": "LADLE",
    "equipment_class": "UTENSIL",
-   "name": "Ladle"
+   "name": "Ladle",
+   "provides_storage_type_code": null
   },
   {
    "code": "WHISK",
    "equipment_class": "UTENSIL",
-   "name": "Whisk"
+   "name": "Whisk",
+   "provides_storage_type_code": null
   },
   {
    "code": "TONGS",
    "equipment_class": "UTENSIL",
-   "name": "Tongs"
+   "name": "Tongs",
+   "provides_storage_type_code": null
   },
   {
    "code": "PEELER",
    "equipment_class": "UTENSIL",
-   "name": "Peeler"
+   "name": "Peeler",
+   "provides_storage_type_code": null
   },
   {
    "code": "GRATER",
    "equipment_class": "UTENSIL",
-   "name": "Grater"
+   "name": "Grater",
+   "provides_storage_type_code": null
   },
   {
    "code": "MEASURING_CUPS",
    "equipment_class": "UTENSIL",
-   "name": "Measuring cups"
+   "name": "Measuring cups",
+   "provides_storage_type_code": null
   },
   {
    "code": "CAN_OPENER",
    "equipment_class": "UTENSIL",
-   "name": "Can opener"
+   "name": "Can opener",
+   "provides_storage_type_code": null
   },
   {
    "code": "AIRTIGHT_CONTAINER",
    "equipment_class": "CONTAINER",
-   "name": "Airtight container"
+   "name": "Airtight container",
+   "provides_storage_type_code": null
   },
   {
    "code": "GLASS_JAR",
    "equipment_class": "CONTAINER",
-   "name": "Glass jar"
+   "name": "Glass jar",
+   "provides_storage_type_code": null
   },
   {
    "code": "ZIP_BAG",
    "equipment_class": "CONTAINER",
-   "name": "Zip bag"
+   "name": "Zip bag",
+   "provides_storage_type_code": null
   },
   {
    "code": "STORAGE_BASKET",
    "equipment_class": "CONTAINER",
-   "name": "Storage basket"
+   "name": "Storage basket",
+   "provides_storage_type_code": null
   },
   {
    "code": "CANISTER",
    "equipment_class": "CONTAINER",
-   "name": "Canister"
+   "name": "Canister",
+   "provides_storage_type_code": null
   },
   {
    "code": "EGG_TRAY",
    "equipment_class": "CONTAINER",
-   "name": "Egg tray"
+   "name": "Egg tray",
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "RANGE",
+   "equipment_class": "APPLIANCE",
+   "name": "Range (cooktop + oven)",
+   "power_source": "ELECTRIC",
+   "size_rank": 4,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "DOUBLE_OVEN",
+   "equipment_class": "APPLIANCE",
+   "name": "Double oven",
+   "power_source": "ELECTRIC",
+   "size_rank": 7,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "DISHWASHER",
+   "equipment_class": "APPLIANCE",
+   "name": "Dishwasher",
+   "power_source": "ELECTRIC",
+   "size_rank": 8,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "RANGE_HOOD",
+   "equipment_class": "APPLIANCE",
+   "name": "Range hood",
+   "power_source": "ELECTRIC",
+   "size_rank": 9,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "WINE_REFRIGERATOR",
+   "equipment_class": "APPLIANCE",
+   "name": "Wine refrigerator",
+   "power_source": "ELECTRIC",
+   "size_rank": 11,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "BEVERAGE_REFRIGERATOR",
+   "equipment_class": "APPLIANCE",
+   "name": "Beverage refrigerator",
+   "power_source": "ELECTRIC",
+   "size_rank": 12,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "ICE_MAKER",
+   "equipment_class": "APPLIANCE",
+   "name": "Ice maker",
+   "power_source": "ELECTRIC",
+   "size_rank": 13,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "GARBAGE_DISPOSAL",
+   "equipment_class": "APPLIANCE",
+   "name": "Garbage disposal",
+   "power_source": "ELECTRIC",
+   "size_rank": 14,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "STAND_MIXER",
+   "equipment_class": "APPLIANCE",
+   "name": "Stand mixer",
+   "power_source": "ELECTRIC",
+   "size_rank": 19,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "FOOD_PROCESSOR",
+   "equipment_class": "APPLIANCE",
+   "name": "Food processor",
+   "power_source": "ELECTRIC",
+   "size_rank": 21,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "COFFEE_MAKER",
+   "equipment_class": "APPLIANCE",
+   "name": "Coffee maker",
+   "power_source": "ELECTRIC",
+   "size_rank": 22,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "ESPRESSO_MACHINE",
+   "equipment_class": "APPLIANCE",
+   "name": "Espresso machine",
+   "power_source": "ELECTRIC",
+   "size_rank": 23,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "STOVETOP_KETTLE",
+   "equipment_class": "APPLIANCE",
+   "name": "Stovetop kettle",
+   "power_source": "MANUAL",
+   "size_rank": 27,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "FRENCH_PRESS",
+   "equipment_class": "APPLIANCE",
+   "name": "French press",
+   "power_source": "MANUAL",
+   "size_rank": 28,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "MANUAL_GRINDER",
+   "equipment_class": "APPLIANCE",
+   "name": "Manual grinder",
+   "power_source": "MANUAL",
+   "size_rank": 29,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "CHARCOAL_GRILL",
+   "equipment_class": "APPLIANCE",
+   "name": "Charcoal grill",
+   "power_source": "MANUAL",
+   "size_rank": 30,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "MORTAR_PESTLE",
+   "equipment_class": "APPLIANCE",
+   "name": "Mortar and pestle",
+   "power_source": "MANUAL",
+   "size_rank": 31,
+   "provides_storage_type_code": null
+  },
+  {
+   "code": "CUSTOM_APPLIANCE",
+   "equipment_class": "APPLIANCE",
+   "name": "Other appliance",
+   "power_source": "OTHER",
+   "size_rank": 32,
+   "provides_storage_type_code": null
+  }
+ ],
+ "kitchenKinds": [
+  {
+   "code": "MAIN",
+   "name": "Main Kitchen",
+   "legacy_kitchen_type": "MAIN"
+  },
+  {
+   "code": "SECONDARY",
+   "name": "Secondary Kitchen",
+   "legacy_kitchen_type": "SECONDARY"
+  },
+  {
+   "code": "OUTDOOR",
+   "name": "Outdoor Kitchen",
+   "legacy_kitchen_type": "OUTDOOR"
+  },
+  {
+   "code": "BASEMENT",
+   "name": "Basement Kitchen",
+   "legacy_kitchen_type": "BASEMENT"
+  },
+  {
+   "code": "BARN",
+   "name": "Barn Kitchen",
+   "legacy_kitchen_type": "OTHER"
+  },
+  {
+   "code": "MOBILE",
+   "name": "Mobile Kitchen",
+   "legacy_kitchen_type": "OTHER"
+  }
+ ],
+ "householdRoles": [
+  {
+   "code": "MOTHER",
+   "name": "Mother"
+  },
+  {
+   "code": "FATHER",
+   "name": "Father"
+  },
+  {
+   "code": "SPOUSE_PARTNER",
+   "name": "Spouse / Partner"
+  },
+  {
+   "code": "DAUGHTER",
+   "name": "Daughter"
+  },
+  {
+   "code": "SON",
+   "name": "Son"
+  },
+  {
+   "code": "PARENT",
+   "name": "Parent"
+  },
+  {
+   "code": "GRANDPARENT",
+   "name": "Grandparent"
+  },
+  {
+   "code": "CAREGIVER",
+   "name": "Caregiver"
+  },
+  {
+   "code": "HOUSEHOLD_MANAGER",
+   "name": "Household Manager"
+  },
+  {
+   "code": "OTHER",
+   "name": "Other"
+  }
+ ],
+ "sectionQuestions": [
+  {
+   "storage_type_code": "REFRIGERATOR",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 3,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "REFRIGERATOR",
+   "code": "CRISPERS",
+   "label": "Crisper drawers",
+   "section_kind": "CRISPER",
+   "name_pattern": "Crisper drawer {n}",
+   "input_kind": "COUNT",
+   "default_value": 2,
+   "max_value": 4
+  },
+  {
+   "storage_type_code": "REFRIGERATOR",
+   "code": "DOOR_SHELVES",
+   "label": "Door shelves",
+   "section_kind": "DOOR_SHELF",
+   "name_pattern": "Door shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 3,
+   "max_value": 8
+  },
+  {
+   "storage_type_code": "REFRIGERATOR",
+   "code": "FREEZER_SECTION",
+   "label": "Freezer section",
+   "section_kind": "ZONE",
+   "name_pattern": "Freezer section",
+   "input_kind": "TOGGLE",
+   "default_value": 0,
+   "max_value": 1
+  },
+  {
+   "storage_type_code": "REFRIGERATOR_FREEZER",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Freezer shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 1,
+   "max_value": 6
+  },
+  {
+   "storage_type_code": "REFRIGERATOR_FREEZER",
+   "code": "BASKETS",
+   "label": "Baskets or bins",
+   "section_kind": "BASKET",
+   "name_pattern": "Freezer basket {n}",
+   "input_kind": "COUNT",
+   "default_value": 1,
+   "max_value": 6
+  },
+  {
+   "storage_type_code": "FREEZER",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 3,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "FREEZER",
+   "code": "DRAWERS",
+   "label": "Drawers",
+   "section_kind": "DRAWER",
+   "name_pattern": "Freezer drawer {n}",
+   "input_kind": "COUNT",
+   "default_value": 2,
+   "max_value": 8
+  },
+  {
+   "storage_type_code": "CHEST_FREEZER",
+   "code": "BASKETS",
+   "label": "Baskets",
+   "section_kind": "BASKET",
+   "name_pattern": "Basket {n}",
+   "input_kind": "COUNT",
+   "default_value": 1,
+   "max_value": 6
+  },
+  {
+   "storage_type_code": "CHEST_FREEZER",
+   "code": "SECTIONS",
+   "label": "Sections",
+   "section_kind": "ZONE",
+   "name_pattern": "Section {n}",
+   "input_kind": "COUNT",
+   "default_value": 0,
+   "max_value": 6
+  },
+  {
+   "storage_type_code": "PANTRY",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 4,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "PANTRY",
+   "code": "SECTIONS",
+   "label": "Sections",
+   "section_kind": "ZONE",
+   "name_pattern": "Section {n}",
+   "input_kind": "COUNT",
+   "default_value": 0,
+   "max_value": 8
+  },
+  {
+   "storage_type_code": "PANTRY",
+   "code": "BINS",
+   "label": "Bins",
+   "section_kind": "BIN",
+   "name_pattern": "Bin {n}",
+   "input_kind": "COUNT",
+   "default_value": 0,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "WALK_IN_PANTRY",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 6,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "WALK_IN_PANTRY",
+   "code": "SECTIONS",
+   "label": "Sections",
+   "section_kind": "ZONE",
+   "name_pattern": "Section {n}",
+   "input_kind": "COUNT",
+   "default_value": 2,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "WALK_IN_PANTRY",
+   "code": "BINS",
+   "label": "Bins",
+   "section_kind": "BIN",
+   "name_pattern": "Bin {n}",
+   "input_kind": "COUNT",
+   "default_value": 0,
+   "max_value": 20
+  },
+  {
+   "storage_type_code": "HANGING_CABINET",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 2,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "HANGING_CABINET",
+   "code": "DRAWERS",
+   "label": "Drawers",
+   "section_kind": "DRAWER",
+   "name_pattern": "Drawer {n}",
+   "input_kind": "COUNT",
+   "default_value": 0,
+   "max_value": 8
+  },
+  {
+   "storage_type_code": "GROUND_CABINET",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 2,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "GROUND_CABINET",
+   "code": "DRAWERS",
+   "label": "Drawers",
+   "section_kind": "DRAWER",
+   "name_pattern": "Drawer {n}",
+   "input_kind": "COUNT",
+   "default_value": 0,
+   "max_value": 8
+  },
+  {
+   "storage_type_code": "STANDALONE_CABINET",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 2,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "STANDALONE_CABINET",
+   "code": "DRAWERS",
+   "label": "Drawers",
+   "section_kind": "DRAWER",
+   "name_pattern": "Drawer {n}",
+   "input_kind": "COUNT",
+   "default_value": 0,
+   "max_value": 8
+  },
+  {
+   "storage_type_code": "ISLAND_CABINET",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 2,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "ISLAND_CABINET",
+   "code": "DRAWERS",
+   "label": "Drawers",
+   "section_kind": "DRAWER",
+   "name_pattern": "Drawer {n}",
+   "input_kind": "COUNT",
+   "default_value": 0,
+   "max_value": 8
+  },
+  {
+   "storage_type_code": "TALL_CABINET",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 4,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "UNDER_SINK_CABINET",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 1,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "DRAWER",
+   "code": "DIVISIONS",
+   "label": "Dividers / divisions",
+   "section_kind": "COMPARTMENT",
+   "name_pattern": "Division {n}",
+   "input_kind": "COUNT",
+   "default_value": 0,
+   "max_value": 8
+  },
+  {
+   "storage_type_code": "OPEN_SHELF",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 1,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "SHELVING_UNIT",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 4,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "SPICE_RACK",
+   "code": "TIERS",
+   "label": "Tiers",
+   "section_kind": "RACK",
+   "name_pattern": "Tier {n}",
+   "input_kind": "COUNT",
+   "default_value": 2,
+   "max_value": 8
+  },
+  {
+   "storage_type_code": "COUNTERTOP",
+   "code": "AREAS",
+   "label": "Areas",
+   "section_kind": "ZONE",
+   "name_pattern": "Area {n}",
+   "input_kind": "COUNT",
+   "default_value": 0,
+   "max_value": 6
+  },
+  {
+   "storage_type_code": "UTILITY_STORAGE",
+   "code": "SHELVES",
+   "label": "How many shelves?",
+   "section_kind": "SHELF",
+   "name_pattern": "Shelf {n}",
+   "input_kind": "COUNT",
+   "default_value": 2,
+   "max_value": 12
+  },
+  {
+   "storage_type_code": "CUSTOM",
+   "code": "SECTIONS",
+   "label": "Sections",
+   "section_kind": "ZONE",
+   "name_pattern": "Section {n}",
+   "input_kind": "COUNT",
+   "default_value": 0,
+   "max_value": 12
+  }
+ ],
+ "kitchenwareTypes": [
+  {
+   "code": "DINNER_PLATE",
+   "category": "DINNERWARE",
+   "name": "Dinner plates",
+   "equipment_type_code": null
+  },
+  {
+   "code": "SALAD_PLATE",
+   "category": "DINNERWARE",
+   "name": "Salad plates",
+   "equipment_type_code": null
+  },
+  {
+   "code": "BOWL",
+   "category": "DINNERWARE",
+   "name": "Bowls",
+   "equipment_type_code": null
+  },
+  {
+   "code": "SERVING_PLATE",
+   "category": "DINNERWARE",
+   "name": "Serving plates",
+   "equipment_type_code": null
+  },
+  {
+   "code": "SERVING_BOWL",
+   "category": "DINNERWARE",
+   "name": "Serving bowls",
+   "equipment_type_code": null
+  },
+  {
+   "code": "FORK",
+   "category": "FLATWARE",
+   "name": "Forks",
+   "equipment_type_code": null
+  },
+  {
+   "code": "SPOON",
+   "category": "FLATWARE",
+   "name": "Spoons",
+   "equipment_type_code": null
+  },
+  {
+   "code": "TABLE_KNIFE",
+   "category": "FLATWARE",
+   "name": "Table knives",
+   "equipment_type_code": null
+  },
+  {
+   "code": "SERVING_SPOON",
+   "category": "FLATWARE",
+   "name": "Serving spoons",
+   "equipment_type_code": null
+  },
+  {
+   "code": "FRYING_PAN",
+   "category": "COOKWARE",
+   "name": "Frying pan",
+   "equipment_type_code": "FRYING_PAN"
+  },
+  {
+   "code": "SAUCEPAN",
+   "category": "COOKWARE",
+   "name": "Saucepan",
+   "equipment_type_code": "SAUCEPAN"
+  },
+  {
+   "code": "STOCK_POT",
+   "category": "COOKWARE",
+   "name": "Stockpot",
+   "equipment_type_code": "STOCK_POT"
+  },
+  {
+   "code": "DUTCH_OVEN",
+   "category": "COOKWARE",
+   "name": "Dutch oven",
+   "equipment_type_code": "STOCK_POT"
+  },
+  {
+   "code": "WOK",
+   "category": "COOKWARE",
+   "name": "Wok",
+   "equipment_type_code": "WOK"
+  },
+  {
+   "code": "BAKING_SHEET",
+   "category": "COOKWARE",
+   "name": "Baking sheet",
+   "equipment_type_code": "BAKING_SHEET"
+  },
+  {
+   "code": "ROASTING_PAN",
+   "category": "COOKWARE",
+   "name": "Roasting pan",
+   "equipment_type_code": "CASSEROLE_DISH"
+  },
+  {
+   "code": "STEAMER_BASKET",
+   "category": "COOKWARE",
+   "name": "Steamer basket",
+   "equipment_type_code": "STEAMER_BASKET"
+  },
+  {
+   "code": "CHEFS_KNIFE",
+   "category": "COOKWARE",
+   "name": "Chef knife",
+   "equipment_type_code": "CHEFS_KNIFE"
+  },
+  {
+   "code": "CUTTING_BOARD",
+   "category": "COOKWARE",
+   "name": "Cutting board",
+   "equipment_type_code": "CUTTING_BOARD"
+  },
+  {
+   "code": "SPATULA",
+   "category": "COOKWARE",
+   "name": "Spatula",
+   "equipment_type_code": "SPATULA"
+  },
+  {
+   "code": "TONGS",
+   "category": "COOKWARE",
+   "name": "Tongs",
+   "equipment_type_code": "TONGS"
+  },
+  {
+   "code": "WHISK",
+   "category": "COOKWARE",
+   "name": "Whisk",
+   "equipment_type_code": "WHISK"
+  },
+  {
+   "code": "LADLE",
+   "category": "COOKWARE",
+   "name": "Ladle",
+   "equipment_type_code": "LADLE"
+  },
+  {
+   "code": "MEASURING_CUPS",
+   "category": "COOKWARE",
+   "name": "Measuring cups",
+   "equipment_type_code": "MEASURING_CUPS"
+  },
+  {
+   "code": "MEASURING_SPOONS",
+   "category": "COOKWARE",
+   "name": "Measuring spoons",
+   "equipment_type_code": null
+  },
+  {
+   "code": "WATER_GLASS",
+   "category": "GLASSWARE",
+   "name": "Water glasses",
+   "equipment_type_code": null
+  },
+  {
+   "code": "MUG",
+   "category": "GLASSWARE",
+   "name": "Mugs",
+   "equipment_type_code": null
+  },
+  {
+   "code": "WINE_GLASS",
+   "category": "GLASSWARE",
+   "name": "Wine glasses",
+   "equipment_type_code": null
+  },
+  {
+   "code": "COCKTAIL_GLASS",
+   "category": "GLASSWARE",
+   "name": "Cocktail glasses",
+   "equipment_type_code": null
+  },
+  {
+   "code": "SPECIALTY_GLASS",
+   "category": "GLASSWARE",
+   "name": "Specialty glassware",
+   "equipment_type_code": null
+  },
+  {
+   "code": "FOOD_STORAGE_CONTAINER",
+   "category": "OTHER",
+   "name": "Food storage containers",
+   "equipment_type_code": null
+  },
+  {
+   "code": "PITCHER",
+   "category": "OTHER",
+   "name": "Pitcher",
+   "equipment_type_code": null
+  },
+  {
+   "code": "TRIVET",
+   "category": "OTHER",
+   "name": "Trivets",
+   "equipment_type_code": null
+  }
+ ],
+ "packaging": [
+  {
+   "code": "BAG",
+   "name": "Bag"
+  },
+  {
+   "code": "BOX",
+   "name": "Box"
+  },
+  {
+   "code": "CAN",
+   "name": "Can"
+  },
+  {
+   "code": "JAR",
+   "name": "Jar"
+  },
+  {
+   "code": "BOTTLE",
+   "name": "Bottle"
+  },
+  {
+   "code": "CARTON",
+   "name": "Carton"
+  },
+  {
+   "code": "POUCH",
+   "name": "Pouch"
+  },
+  {
+   "code": "TRAY",
+   "name": "Tray"
+  },
+  {
+   "code": "WRAPPED",
+   "name": "Wrapped"
+  },
+  {
+   "code": "LOOSE",
+   "name": "Loose / no packaging"
+  },
+  {
+   "code": "OTHER",
+   "name": "Other"
   }
  ],
  "units": [
@@ -645,6 +1555,24 @@ export const REF = {
    "code": "FL_OZ",
    "name": "Fluid ounce",
    "symbol": "fl oz",
+   "dimension": "VOLUME"
+  },
+  {
+   "code": "PINT",
+   "name": "Pint",
+   "symbol": "pt",
+   "dimension": "VOLUME"
+  },
+  {
+   "code": "QUART",
+   "name": "Quart",
+   "symbol": "qt",
+   "dimension": "VOLUME"
+  },
+  {
+   "code": "GALLON",
+   "name": "Gallon",
+   "symbol": "gal",
    "dimension": "VOLUME"
   },
   {
@@ -1292,7 +2220,8 @@ export const REF = {
   "DATA_EXPORT",
   "ACCOUNT_DELETION",
   "DATA_BACKUP",
-  "CLOUD_BACKUP"
+  "CLOUD_BACKUP",
+  "MANUAL_REFERENCE_MEDIA"
  ],
  "capabilityIds": {
   "HOUSEHOLD_MANAGEMENT": "b66dbb9b-993d-5615-8b54-dda2e7f4ec52",
@@ -1336,6 +2265,7 @@ export const REF = {
   "ACCOUNT_DELETION": "9c5adbd6-a825-5574-bdb9-286db840779b",
   "TEST_ADVANCED_CAPTURE": "1c1176ad-cf0e-577e-b858-bc5d2b1a93ee",
   "DATA_BACKUP": "337c6dff-2e22-59df-b5f5-e80c09cd4372",
-  "CLOUD_BACKUP": "1776fc9f-17ba-516f-a773-ad8e613b5953"
+  "CLOUD_BACKUP": "1776fc9f-17ba-516f-a773-ad8e613b5953",
+  "MANUAL_REFERENCE_MEDIA": "71674f86-5f31-50a0-b824-2b603f2cad51"
  }
 };
