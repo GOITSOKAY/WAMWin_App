@@ -42,10 +42,11 @@ class TierLockedFeatures extends StatelessWidget {
     final p = Palette.of(context);
     return Container(
       margin: const EdgeInsets.only(top: 16), padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(border: Border.all(color: p.line, width: 1.5), borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF3B1416) : Brand.redSoft,
+          border: Border.all(color: Brand.redFor(context), width: 1.5), borderRadius: BorderRadius.circular(16)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Row(children: [Icon(Icons.lock_outline, size: 16, color: p.text2), const SizedBox(width: 6),
-          Expanded(child: Text('More ways to add this (not in WAMWins Basic)', style: TextStyle(color: p.text2, fontWeight: FontWeight.w500)))]),
+        Row(children: [Icon(Icons.lock_outline, size: 16, color: Brand.redFor(context)), const SizedBox(width: 6),
+          Expanded(child: Text('More ways to add this (not in WAMWins Basic)', style: TextStyle(color: Brand.redFor(context), fontWeight: FontWeight.w500)))]),
         const SizedBox(height: 8),
         for (final f in locked) Semantics(enabled: false, label: '${f.title}, higher tier, locked', child: Container(
           margin: const EdgeInsets.only(bottom: 6), padding: const EdgeInsets.fromLTRB(12, 4, 0, 4),
@@ -54,7 +55,7 @@ class TierLockedFeatures extends StatelessWidget {
             Icon(f.icon, size: 20, color: p.text2), const SizedBox(width: 10),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(f.title, style: TextStyle(color: p.text2, fontWeight: FontWeight.w500)),
-              Row(children: [Icon(Icons.lock_outline, size: 12, color: p.text2), const SizedBox(width: 4), Text('Higher tier', style: TextStyle(color: p.text2, fontSize: 12))]),
+              Row(children: [Icon(Icons.lock_outline, size: 12, color: Brand.redFor(context)), const SizedBox(width: 4), Text('Higher tier', style: TextStyle(color: Brand.redFor(context), fontSize: 12, fontWeight: FontWeight.w500))]),
             ])),
             InfoButton(label: f.title, title: f.title, body: [f.text, 'This works automatically in a higher WAMWins tier. In WAMWins Basic you add the same details by hand, and they are stored in exactly the same place.']),
           ]),

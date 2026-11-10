@@ -11,7 +11,7 @@ class InfoButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => IconButton(
         tooltip: 'More information: $label',
-        icon: Icon(Icons.info_outline, color: Palette.of(context).link),
+        icon: Icon(Icons.info_outline, color: Brand.redFor(context)),
         onPressed: () => showInfo(context, title: title, body: body),
       );
 }

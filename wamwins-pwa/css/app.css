@@ -488,3 +488,16 @@ input[type="date"].input { min-width: 0; width: 100%; }
 /* <details> renders its content through a browser-internal slot that does not inherit the page's border-box sizing,
    so set it explicitly; everything inside then inherits it again (inputs were 34px too wide inside open sections). */
 details > *, .input { box-sizing: border-box; }
+
+/* =============================================================================
+   BRAND RED - (i) information buttons, notifications (toasts, app-update notice) and higher-tier notices.
+   #C62828 behind white text = 5.6:1; #D32F2F as text on white = 5.0:1; dark mode uses #FF8A80 on dark surfaces.
+   ============================================================================= */
+:root { --red: #D32F2F; --red-strong: #C62828; --red-soft: #FFEBEE; }
+:root[data-theme="dark"] { --red: #FF8A80; --red-soft: #3B1416; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --red: #FF8A80; --red-soft: #3B1416; } }
+.info-btn, :root[data-theme="dark"] .info-btn { color: var(--red); }
+.toast, :root[data-theme="dark"] .toast { background: var(--red-strong); color: #fff; box-shadow: 0 8px 24px rgba(198, 40, 40, .3); }
+.toast .btn-text, :root[data-theme="dark"] .toast .btn-text { color: #fff; font-weight: 700; text-decoration: underline; }
+.locked-head, .locked-head svg, .locked-state, .locked-state svg { color: var(--red); }
+.locked-features { border-color: var(--red); background: var(--red-soft); }

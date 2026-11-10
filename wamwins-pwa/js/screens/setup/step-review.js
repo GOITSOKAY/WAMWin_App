@@ -1,6 +1,6 @@
 import { h, toast } from '../../core/dom.js';
 import { REF } from '../../inquiry/reference.js';
-import { COOKING_ROLE, SKILL, MEASURES, ALLERGENS, DIETS, KITCHENWARE_CATEGORIES } from '../../inquiry/questions.js';
+import { COOKING_ROLE, MEASURES, ALLERGENS, DIETS, KITCHENWARE_CATEGORIES } from '../../inquiry/questions.js';
 import { deriveTree, sectionNames } from '../../inquiry/draft.js';
 import { provision } from '../../inquiry/provisioning.js';
 
@@ -16,7 +16,7 @@ export function create({ draft, user, session, go }) {
   const people = draft.health.needed === 'YES' && draft.health.consent ? draft.health.people : [];
   const el = h('div', {},
     block(1, 'About You', 'about',
-      p(`${a.displayName}. ${name(COOKING_ROLE, a.cookingRole)}${a.householdRole ? ` (${REF.householdRoles.find(r => r.code === a.householdRole)?.name})` : ''}. ${name(SKILL, a.skill)}. ${name(MEASURES, a.measures)} units.`),
+      p(`${a.displayName}. ${name(COOKING_ROLE, a.cookingRole)}${a.householdRole ? ` (${REF.householdRoles.find(r => r.code === a.householdRole)?.name})` : ''}. ${name(MEASURES, a.measures)} units.`),
       p(`${hh.name}${hh.nickname ? ` (“${hh.nickname}”)` : ''}: ${hh.size} ${hh.size === 1 ? 'person' : 'people'}, ${hh.eaters} eating from this kitchen.`)),
     block(2, 'Health Profiles', 'health',
       draft.health.needed !== 'YES' ? p('No special dietary management.')

@@ -11,6 +11,13 @@ class Brand {
   static const gray = Color(0xFFE8EEF7);
   static const navy = Color(0xFF0A2463);
   static const onBrandSoft = Color(0xFFDCE6FB);
+  // Brand red: (i) buttons, notifications and higher-tier notices. #C62828 behind white text = 5.6:1;
+  // #D32F2F as text on white = 5.0:1; dark mode uses #FF8A80 on dark surfaces.
+  static const red = Color(0xFFD32F2F);
+  static const redStrong = Color(0xFFC62828);
+  static const redOnDark = Color(0xFFFF8A80);
+  static const redSoft = Color(0xFFFFEBEE);
+  static Color redFor(BuildContext context) => Theme.of(context).brightness == Brightness.dark ? redOnDark : red;
 }
 
 /// Light/dark palette (same tokens as the web client's CSS).
@@ -46,7 +53,7 @@ ThemeData buildTheme(Brightness brightness) {
     ),
     dividerColor: p.line,
     checkboxTheme: CheckboxThemeData(fillColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? Brand.blue : null)),
-    snackBarTheme: SnackBarThemeData(behavior: SnackBarBehavior.floating, backgroundColor: brightness == Brightness.dark ? const Color(0xFFEEF3FD) : Brand.navy,
-        contentTextStyle: TextStyle(fontFamily: 'Poppins', color: brightness == Brightness.dark ? Brand.navy : Colors.white), actionTextColor: Brand.yellow),
+    snackBarTheme: const SnackBarThemeData(behavior: SnackBarBehavior.floating, backgroundColor: Brand.redStrong,
+        contentTextStyle: TextStyle(fontFamily: 'Poppins', color: Colors.white), actionTextColor: Colors.white),
   );
 }

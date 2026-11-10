@@ -1,12 +1,12 @@
 import { h, field, choices, stepper } from '../../core/dom.js';
-import { COOKING_ROLE, SKILL, MEASURES, HOUSEHOLD_ROLES, DEFAULT_MEASURES } from '../../inquiry/questions.js';
+import { COOKING_ROLE, MEASURES, HOUSEHOLD_ROLES, DEFAULT_MEASURES } from '../../inquiry/questions.js';
 import { ensureHousehold } from '../../inquiry/provisioning.js';
 import { labelWithInfo } from '../../components/info.js';
 
 // Module 1 - About You (merges the former "About you" and "Your household" steps). Kitchen setup is Module 3.
 export function create({ draft, user, session }) {
   const a = draft.about, hh = draft.household;
-  a.displayName ??= user.display_name; a.cookingRole ??= 'ME'; a.skill ??= 'COMFORTABLE'; a.measures ??= DEFAULT_MEASURES;
+  a.displayName ??= user.display_name; a.cookingRole ??= 'ME'; a.measures ??= DEFAULT_MEASURES;
   hh.size ??= 2; hh.eaters ??= hh.size;
   if (!hh.name) { const first = (a.displayName || '').trim().split(/\s+/)[0]; hh.name = first ? `${first}’s household` : 'My household'; }
 
@@ -36,7 +36,6 @@ export function create({ draft, user, session }) {
       choices(COOKING_ROLE, a.cookingRole, v => { a.cookingRole = v; drawRole(); }),
       h('p', { class: 'hint', text: 'If you share the cooking, you can name the other cooks later in your family profiles.' })),
     roleBox,
-    h('section', { class: 'q-block' }, h('h2', { text: 'How confident are you in the kitchen?' }), choices(SKILL, a.skill, v => { a.skill = v; })),
     h('section', { class: 'q-block' }, labelWithInfo('Which measurements do you use?', { title: 'Measurements', body: 'U.S. customary units (ounces, pounds, cups, tablespoons, teaspoons) are the default. Choose metric if you prefer grams and milliliters; you can change this later.' }),
       choices(MEASURES, a.measures, v => { a.measures = v; })),
     h('section', { class: 'q-block' }, h('h2', { text: 'Your household' }), fHh, field({ label: 'Household nickname (optional)', input: nick }),

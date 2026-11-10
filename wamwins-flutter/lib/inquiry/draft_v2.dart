@@ -36,7 +36,7 @@ class DraftV2 extends ChangeNotifier {
   static DraftV2 fresh(EntryRef ref, String displayName) {
     final main = newKitchen(ref, 'MAIN', const []);
     (main['storage'] as List).addAll([newStorage(ref, main, 'REFRIGERATOR'), newStorage(ref, main, 'PANTRY')]);
-    return DraftV2(normalize({'version': 2, 'about': {'displayName': displayName, 'measures': 'IMPERIAL', 'cookingRole': 'ME', 'skill': 'COMFORTABLE'}, 'selfKey': 'me',
+    return DraftV2(normalize({'version': 2, 'about': {'displayName': displayName, 'measures': 'IMPERIAL', 'cookingRole': 'ME'}, 'selfKey': 'me',
       'household': {'size': 2, 'eaters': 2}, 'health': {'needed': null, 'consent': null, 'people': []}, 'kitchens': [main], 'appliances': [], 'kitchenware': [], 'food': []}));
   }
 }

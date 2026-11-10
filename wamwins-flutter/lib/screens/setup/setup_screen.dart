@@ -240,7 +240,7 @@ class _ReviewV2 extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       block(1, 'About You', 'about', [
         Text('${a['displayName']}. ${nameOf(cookingRoles, a['cookingRole'])}${a['householdRole'] != null ? ' (${ref.nameOf(ref.roles, a['householdRole'])})' : ''}. '
-            '${nameOf(skillsV2, a['skill'])}. ${nameOf(measuresV2, a['measures'])} units.'),
+            '${nameOf(measuresV2, a['measures'])} units.'),
         Text('${h['name']}${(h['nickname'] as String?)?.isNotEmpty == true ? ' (“${h['nickname']}”)' : ''}: ${h['size']} people, ${h['eaters']} eating from this kitchen.'),
       ]),
       block(2, 'Health Profiles', 'health', [

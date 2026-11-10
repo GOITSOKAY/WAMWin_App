@@ -64,7 +64,7 @@ class _AboutModuleState extends State<AboutModule> {
   void initState() {
     super.initState();
     final d = widget.c.d;
-    d.about.putIfAbsent('cookingRole', () => 'ME'); d.about.putIfAbsent('skill', () => 'COMFORTABLE'); d.about.putIfAbsent('measures', () => 'IMPERIAL');
+    d.about.putIfAbsent('cookingRole', () => 'ME'); d.about.putIfAbsent('measures', () => 'IMPERIAL');
     d.household.putIfAbsent('size', () => 2); d.household.putIfAbsent('eaters', () => d.household['size']);
     if ((d.household['name'] as String? ?? '').isEmpty) {
       final first = (d.about['displayName'] as String? ?? '').trim().split(RegExp(r'\s+')).first;
@@ -81,7 +81,6 @@ class _AboutModuleState extends State<AboutModule> {
           children: [ChoiceList(options: cookingRoles, value: a['cookingRole'] as String?, onChanged: (v) => set(() => a['cookingRole'] = v))]),
       if (a['cookingRole'] == 'ME') QBlock(title: 'What is your role in the household?', hint: 'Optional. It helps WAMWins understand who plans and cooks.',
           children: [ChoiceList(options: opts(widget.c.ref.roles), value: a['householdRole'] as String?, onChanged: (v) => set(() => a['householdRole'] = v))]),
-      QBlock(title: 'How confident are you in the kitchen?', children: [ChoiceList(options: skillsV2, value: a['skill'] as String?, onChanged: (v) => set(() => a['skill'] = v))]),
       QBlock(children: [
         const LabelWithInfo('Which measurements do you use?', title: 'Measurements', body: ['U.S. customary units (ounces, pounds, cups, tablespoons, teaspoons) are the default. Choose metric if you prefer grams and milliliters; you can change this later.']),
         const SizedBox(height: 8),
