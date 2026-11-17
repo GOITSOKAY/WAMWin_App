@@ -202,8 +202,8 @@ double _d(Object? v) => (v as num).toDouble();
     final ratio = required == 0 ? 1.0 : available.length / required;
     String fmtMissing(ItemRole m) => '${m.name} (${_num(m.quantity)} ${m.unit.toLowerCase()})';
     final factors = <Factor>[
-      Factor('SAFETY', 0, 1, 'Safe for ${inp.members.isEmpty ? 'household' : inp.members.map((m) => m['display_name']).join(', ')}: no allergen, intolerance'
-          '${c.diets.isNotEmpty ? ', diet' : ''} or hard health-rule conflicts${omittedOptional.isNotEmpty ? '; omit optional ${omittedOptional.join(', ')}' : ''}'),
+      Factor('SAFETY', 0, 1, 'Fits saved needs for ${inp.members.isEmpty ? 'household' : inp.members.map((m) => m['display_name']).join(', ')}: no allergen, intolerance'
+          '${c.diets.isNotEmpty ? ', diet' : ''} or hard health-rule conflicts found${omittedOptional.isNotEmpty ? '; omit optional ${omittedOptional.join(', ')}' : ''}. Always check labels'),
       Factor('INVENTORY', ratio * _wInventory, _wInventory, '${available.length} of $required ingredients already in your kitchen'),
       Factor('USE_SOON', (useSoon.length < 3 ? useSoon.length : 3) * _wUseSoon, _wUseSoon,
           useSoon.isNotEmpty ? 'Uses soon-to-expire: ${useSoon.map((u) => u.name).join(', ')}' : 'No use-soon items involved'),

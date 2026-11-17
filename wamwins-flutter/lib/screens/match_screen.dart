@@ -8,6 +8,7 @@ import '../inquiry/catalog.dart';
 import '../matching/matching_engine.dart';
 import '../matching/matching_service.dart';
 import '../matching/meal_service.dart';
+import '../privacy/privacy_service.dart';
 import '../ui/widgets.dart';
 
 /// "What can we cook?" - safety-first meal matching for the people selected, using what the household has.
@@ -21,6 +22,14 @@ class MatchScreen extends StatefulWidget {
 
 class _MatchScreenState extends State<MatchScreen> {
   late String _hh;
+  static const _reasonCategory = {'ALLERGEN': 'ALLERGIES', 'INTOLERANCE': 'ALLERGIES', 'DIETARY': 'DIETS', 'HEALTH_RULE': 'HEALTH_GOALS'};
+  /// Matching uses everyone's saved needs, but an explanation names a person's specific detail only to people allowed to see it.
+  bool _canSee(Exclusion e) {
+    if (e.memberId == null || !_reasonCategory.containsKey(e.reason)) return true;
+    final privacy = PrivacyService(AppScope.of(context).db), uid = widget.user['id'] as String;
+    final member = _members.where((m) => m['id'] == e.memberId).firstOrNull;
+    return PrivacyService.relation(userId: uid, membership: privacy.membershipOf(uid), member: member, grants: privacy.grants(_hh), category: _reasonCategory[e.reason]) != null;
+  }
   late List<DbRow> _members;
   late Set<String> _selected;
   String _slot = 'ANY';
@@ -41,7 +50,7 @@ class _MatchScreenState extends State<MatchScreen> {
     _loaded = true;
     final s = AppScope.of(context);
     _hh = s.profile.householdIdFor(widget.user['id'] as String)!;
-    _members = s.db.select('SELECT id, display_name FROM family_member WHERE household_id = ? AND deleted_at IS NULL AND is_active = 1 ORDER BY (linked_user_id IS NULL), created_at', [_hh]);
+    _members = s.db.select('SELECT id, household_id, display_name, linked_user_id, age_band FROM family_member WHERE household_id = ? AND deleted_at IS NULL AND is_active = 1 ORDER BY (linked_user_id IS NULL), created_at', [_hh]);
     _selected = {for (final m in _members) m['id'] as String};
   }
 
@@ -135,10 +144,10 @@ class _MatchScreenState extends State<MatchScreen> {
         ErrorBanner(_error),
         if (run != null) ...[
           const SizedBox(height: 12),
-          Semantics(header: true, child: Text(run.results.isEmpty ? 'No safe matches yet' : 'Suggested for you', style: Theme.of(context).textTheme.titleLarge)),
+          Semantics(header: true, child: Text(run.results.isEmpty ? 'No matches yet' : 'Suggested for you', style: Theme.of(context).textTheme.titleLarge)),
           const SizedBox(height: 4),
           Text(run.results.isEmpty
-              ? 'Nothing fits everyone with what you have. Try fewer people, another meal, or add food to your inventory.'
+              ? 'Nothing fits everyone’s saved food needs with what you have. Try fewer people, another meal, or add food to your inventory.'
               : 'Ranked by what you already have, what needs using soon, and your family’s preferences.',
               style: TextStyle(color: p.text2)),
           const SizedBox(height: 12),
@@ -151,7 +160,8 @@ class _MatchScreenState extends State<MatchScreen> {
                 leading: Icon(e.reason == 'ALLERGEN' || e.reason == 'INTOLERANCE' ? Icons.block : Icons.remove_circle_outline,
                     color: e.reason == 'ALLERGEN' || e.reason == 'INTOLERANCE' ? p.danger : p.text2),
                 title: Text(run.recipeTitles[e.recipeId] ?? 'Recipe'),
-                subtitle: Text('${_reasons[e.reason] ?? e.reason}: ${e.detail}'))],
+                subtitle: Text(_canSee(e) ? '${_reasons[e.reason] ?? e.reason}: ${e.detail}'
+                    : 'Doesn’t fit a saved food need for ${_members.firstWhere((m) => m['id'] == e.memberId, orElse: () => {'display_name': 'someone'})['display_name']} (details private)'))],
           ),
         ],
       ]))]),

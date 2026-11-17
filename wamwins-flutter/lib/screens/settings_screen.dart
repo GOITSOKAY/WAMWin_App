@@ -4,7 +4,12 @@ import '../app/scope.dart';
 import '../app/theme.dart';
 import '../core/db.dart';
 import '../inquiry/catalog.dart';
+import '../privacy/consent_dialog.dart';
+import '../privacy/privacy_service.dart';
+import '../ui/tier_locked.dart';
 import '../ui/widgets.dart';
+import '../voice/voice_gate.dart';
+import '../voice/voice_screen.dart' show voiceLocked;
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key, required this.user});
@@ -42,12 +47,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
         const SizedBox(height: 20),
         Container(padding: const EdgeInsets.all(18), decoration: BoxDecoration(border: Border.all(color: p.line, width: 1.5), borderRadius: BorderRadius.circular(16)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Your data stays private', style: Theme.of(context).textTheme.titleMedium),
+            Text('Privacy & sharing', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
-            const Text('Your household information is protected by several layers of security. Only people you invite into your household can see it, and health details are visible only to members you allow.'),
+            const Text('Choose who can see each person’s health details and meal preferences, and when their access ends. Review your consents, see the access history, download a copy of your data, or delete it.'),
             const SizedBox(height: 8),
-            Text('Your password is stored only as a protected one-way code, so it can’t be read back, even from this device.', style: Theme.of(context).textTheme.bodySmall),
+            Text('Free on every plan. We never sell your information or use it for advertising.', style: Theme.of(context).textTheme.bodySmall),
+            const SizedBox(height: 12),
+            PrimaryButton(label: 'Open Privacy & sharing', onPressed: () => s.router.go('privacy')),
+            const LegalLinks(),
           ])),
+        const SizedBox(height: 20),
+        // Voice commands: a higher-tier capability. Basic shows the locked notice only (the speech engine is never started).
+        if (!VoiceGate.entitled(s, widget.user))
+          TierLockedFeatures(householdId: s.profile.householdIdFor(widget.user['id'] as String), features: voiceLocked)
+        else ...[
+          Text('Voice commands', style: Theme.of(context).textTheme.titleLarge),
+          Text(VoiceGate.consented(s, widget.user) ? 'On. The microphone listens only when you tap it.' : 'Off. Turn on to use your voice for simple commands.'),
+          Wrap(spacing: 8, children: [
+            if (VoiceGate.consented(s, widget.user)) ...[
+              GhostButton(expand: false, onPressed: () => s.router.go('voice'), child: const Text('Use voice commands')),
+              TextButton(onPressed: () { PrivacyService(s.db).recordConsent(widget.user['id'] as String, VoiceGate.capability, false, method: 'SETTINGS'); setState(() {}); }, child: const Text('Turn off')),
+            ] else GhostButton(expand: false, onPressed: () async { await askConsent(context, widget.user['id'] as String, VoiceGate.capability); setState(() {}); }, child: const Text('Turn on voice commands')),
+          ]),
+        ],
         const SizedBox(height: 24),
         GhostButton(onPressed: () async { await s.auth.logout(); s.toast('Signed out.'); s.router.reset('welcome'); }, child: const Text('Sign out')),
         const SizedBox(height: 8),

@@ -120,7 +120,7 @@ export const REF = {
   },
   {
    "code": "HIGH_FIBER",
-   "name": "Higher fibre",
+   "name": "Higher fiber",
    "direction": "INCREASE"
   },
   {
@@ -2266,6 +2266,7 @@ export const REF = {
   "TEST_ADVANCED_CAPTURE": "1c1176ad-cf0e-577e-b858-bc5d2b1a93ee",
   "DATA_BACKUP": "337c6dff-2e22-59df-b5f5-e80c09cd4372",
   "CLOUD_BACKUP": "1776fc9f-17ba-516f-a773-ad8e613b5953",
-  "MANUAL_REFERENCE_MEDIA": "71674f86-5f31-50a0-b824-2b603f2cad51"
+  "MANUAL_REFERENCE_MEDIA": "71674f86-5f31-50a0-b824-2b603f2cad51",
+  "VOICE_COMMANDS": "7c4e17d0-e77b-56c9-ae57-0573eebc4d94"
  }
 };

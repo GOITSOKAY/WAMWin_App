@@ -2,9 +2,12 @@ import { h, icon, choices, field, toast } from '../core/dom.js';
 import { deleteEverything } from '../data/db.js';
 import { applyTheme, currentTheme } from '../platform/theme.js';
 import { installState } from '../platform/pwa.js';
+import { legalLinks } from '../privacy/consent.js';
+import { voiceSettings } from '../voice/entry.js';
 
 export async function mount(root, ctx) {
   const install = installState();
+  const voiceSection = await voiceSettings(ctx);           // Voice commands: tier-locked notice on Basic, settings when entitled
   const confirmInput = h('input', { class: 'input', type: 'text', autocomplete: 'off', placeholder: 'DELETE' });
   const fConfirm = field({ label: 'Type DELETE to confirm', input: confirmInput });
   const dangerZone = h('div', { class: 'stack-s', hidden: true }, fConfirm,
@@ -26,9 +29,12 @@ export async function mount(root, ctx) {
       install.canPrompt || install.ios ? h('section', { class: 'stack-s' }, h('h2', { text: 'Install the app' }),
         install.canPrompt ? h('button', { type: 'button', class: 'btn btn-blue', onclick: () => install.prompt() }, icon('download', 20), 'Install WAMWins')
           : h('p', { class: 'hint', text: 'On iPhone or iPad: tap Share, then “Add to Home Screen”.' })) : null,
-      h('section', { class: 'panel', 'aria-labelledby': 'p-h' }, h('h2', { id: 'p-h' }, 'Your data stays private'),
-        h('p', { text: 'Your household information is protected by several layers of security. Only people you invite into your household can see it, and health details are visible only to members you allow.' }),
-        h('p', { class: 'hint', text: 'Your password is stored only as a protected one-way code, so it can’t be read back, even from this device.' })),
+      h('section', { class: 'panel', 'aria-labelledby': 'p-h' }, h('h2', { id: 'p-h' }, 'Privacy & sharing'),
+        h('p', { text: 'Choose who can see each person’s health details and meal preferences, and when their access ends. Review your consents, see the access history, download a copy of your data, or delete it.' }),
+        h('p', { class: 'hint', text: 'Free on every plan. We never sell your information or use it for advertising.' }),
+        h('button', { type: 'button', class: 'btn btn-blue', id: 'open-privacy', onclick: () => ctx.go('privacy') }, icon('shield', 20), h('span', { text: 'Open Privacy & sharing' })),
+        legalLinks()),
+      voiceSection,
       h('section', { class: 'stack-s' },
         h('button', { type: 'button', class: 'btn btn-ghost btn-block', text: 'Sign out', onclick: async () => { await ctx.auth.logout(); toast('Signed out.'); ctx.go('welcome'); } }),
         h('button', { type: 'button', class: 'btn-text', style: { color: 'var(--danger)' }, text: 'Delete all WAMWins data on this device…', onclick: (e) => { dangerZone.hidden = false; e.target.hidden = true; confirmInput.focus(); } }),

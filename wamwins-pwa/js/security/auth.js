@@ -1,4 +1,5 @@
 import { tx, get } from '../data/db.js';
+import { CONSENT } from '../privacy/notices.js';
 
 /**
  * Authentication port. LocalAuthAdapter keeps accounts on this device (offline-first) with
@@ -49,6 +50,7 @@ export const LocalAuthAdapter = {
     if (!validEmail(mail)) throw new AuthError('EMAIL', 'Enter a valid email address, like name@example.com.');
     const strength = passwordStrength(password, [name, mail.split('@')[0]]);
     if (strength.score < 2) throw new AuthError('PASSWORD', strength.message);
+    if (!consents?.AGE_18_PLUS) throw new AuthError('CONSENT', 'WAMWins accounts are for adults 18 and older.');
     if (!consents?.TERMS || !consents?.PRIVACY_POLICY) throw new AuthError('CONSENT', 'Please accept the Terms and Privacy Policy to create an account.');
     if (await tx(['user_account'], 'readonly', t => t.oneByIndex('user_account', 'email', mail)))
       throw new AuthError('EXISTS', 'An account with this email already exists on this device. Log in instead.');
@@ -61,7 +63,8 @@ export const LocalAuthAdapter = {
       await t.add('auth_identity', { id: crypto.randomUUID(), user_id: userId, provider: 'PASSWORD', provider_subject: mail,
         secret_hash: b64(hash), salt: b64(salt), kdf: 'PBKDF2-SHA256', iterations: ITERATIONS, failed_attempts: 0, locked_until: null, created_at: now });
       for (const [type, granted] of Object.entries(consents))
-        await t.add('consent_record', { id: crypto.randomUUID(), user_id: userId, consent_type: type, document_version: '1', granted: !!granted, recorded_at: now });
+        await t.add('consent_record', { id: crypto.randomUUID(), user_id: userId, consent_type: type, granted: !!granted,
+          document_code: CONSENT[type]?.doc ?? null, document_version: CONSENT[type]?.version ?? '1', text_hash: null, method: 'REGISTRATION', subject_ref: null, recorded_at: now });
     });
     await startSessionSafe(userId, true);
     return userId;

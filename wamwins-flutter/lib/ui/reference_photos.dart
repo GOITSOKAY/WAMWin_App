@@ -9,6 +9,8 @@ import 'package:share_plus/share_plus.dart';
 import '../app/scope.dart';
 import '../app/theme.dart';
 import '../media/media_store.dart';
+import '../privacy/consent_dialog.dart';
+import '../privacy/privacy_service.dart';
 import 'info.dart';
 import 'widgets.dart';
 
@@ -24,6 +26,10 @@ class ReferencePhotos extends StatefulWidget {
 
 class _ReferencePhotosState extends State<ReferencePhotos> {
   Future<void> _pick(ImageSource source) async {
+    // Consent before the first reference photo (MEDIA_PROCESSING), as on the web client.
+    if (!PrivacyService(AppScope.of(context).db).hasConsent(widget.userId, 'MEDIA_PROCESSING') &&
+        !await askConsent(context, widget.userId, 'MEDIA_PROCESSING')) { return; }
+    if (!mounted) return;
     final file = await ImagePicker().pickImage(source: source, maxWidth: 1600, imageQuality: 85);
     if (file == null || !mounted) return;
     final bytes = await file.readAsBytes();

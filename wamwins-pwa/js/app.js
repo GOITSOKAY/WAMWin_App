@@ -1,6 +1,6 @@
 import { V1_STEP_MAP } from './inquiry/step-map.js';
 import { h, clear, brandLogo } from './core/dom.js';
-import { parse, go, loadScreen, hasScreen, PUBLIC, canGoBack, NAV_EVENT } from './core/router.js';
+import { parse, go, loadScreen, hasScreen, PUBLIC, OPEN, canGoBack, NAV_EVENT } from './core/router.js';
 import { Auth } from './security/auth.js';
 import { openDb, tx } from './data/db.js';
 import { initPwa } from './platform/pwa.js';
@@ -13,7 +13,16 @@ import { applyTheme } from './platform/theme.js';
  * Only the current screen is loaded; a failing screen shows a recoverable error, never a blank app.
  */
 const root = document.getElementById('app');
-let current = null, renderId = 0;
+let current = null, renderId = 0, retentionRan = false;
+
+// Retention schedule (Privacy Notice): old meal/match history is deleted on the device. Never blocks a screen.
+async function runRetention(user) {
+  try {
+    const { applyRetention } = await import('./privacy/access.js');
+    const ms = await tx(['household_membership'], 'readonly', t => t.byIndex('household_membership', 'user_id', user.id));
+    for (const m of ms.filter(m => m.status === 'ACTIVE')) await applyRetention(m.household_id);
+  } catch (e) { console.warn('Retention check skipped', e); }
+}
 
 async function resumePath(user) {
   const [sessions, memberships] = await tx(['questionnaire_session', 'household_membership'], 'readonly', async t =>
@@ -29,14 +38,15 @@ async function render() {
   let { name, arg } = parse();
   try {
     const user = await Auth.currentUser();
-    if (!user && !PUBLIC.has(name)) return go('welcome', true);
-    if (user && (PUBLIC.has(name) || !name || !hasScreen(name))) return go(await resumePath(user), true);
+    if (!user && !PUBLIC.has(name) && !OPEN.has(name)) return go('welcome', true);
+    if (user && !OPEN.has(name) && (PUBLIC.has(name) || !name || !hasScreen(name))) return go(await resumePath(user), true);
     if (user && (name === 'home' || name === 'match' || name === 'inventory') && (await resumePath(user)) !== 'home') return go(await resumePath(user), true);
+    if (user && !retentionRan) { retentionRan = true; runRetention(user); }
     const mod = await loadScreen(name);
     if (id !== renderId) return;                                  // a newer navigation won
     current?.dispose?.();
     clear(root);
-    current = await mod.mount(root, { user, arg, go, auth: Auth });
+    current = await mod.mount(root, { user, arg, go, auth: Auth, back: () => go(user ? 'settings' : 'welcome') });
     window.scrollTo(0, 0);
     root.querySelector('h1')?.focus?.({ preventScroll: true });
   } catch (err) {

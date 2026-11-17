@@ -501,3 +501,46 @@ details > *, .input { box-sizing: border-box; }
 .toast .btn-text, :root[data-theme="dark"] .toast .btn-text { color: #fff; font-weight: 700; text-decoration: underline; }
 .locked-head, .locked-head svg, .locked-state, .locked-state svg { color: var(--red); }
 .locked-features { border-color: var(--red); background: var(--red-soft); }
+
+/* ---------------------------------------------------------------- privacy: consent pop-ups, sharing, notices */
+.consent-modal { max-width: 560px; }
+.consent-modal.wide { max-width: 760px; }
+.consent-body { display: grid; gap: 10px; }
+.consent-body p, .consent-body li { line-height: 1.5; }
+.consent-list { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.consent-subject { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; background: var(--blue-50); }
+.consent-summary { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+.consent-summary ul { margin: 6px 0; padding-left: 20px; }
+.consent-check { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
+.consent-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; position: sticky; bottom: -20px; background: var(--bg); padding: 12px 0 0; }
+.consent-actions .btn { flex: 1 1 160px; }
+.consent-actions .btn:disabled { opacity: .5; cursor: not-allowed; }
+.consent-status-line .hint { display: flex; gap: 6px; align-items: flex-start; }
+.doc-section h3 { font-size: var(--step-0); margin: 12px 0 4px; }
+.doc-section ul { padding-left: 20px; display: grid; gap: 4px; }
+.legal-links { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; justify-content: center; font-size: var(--step--1); color: var(--text-2); }
+.btn-text.inline { padding: 0; min-height: 0; font: inherit; text-decoration: underline; }
+.grant-card { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 16px; }
+.grant-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.grant-list li { display: flex; gap: 10px; justify-content: space-between; align-items: flex-start; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
+.grant-list li > div { min-width: 0; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+.access-log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: var(--step--1); }
+.tag.muted, .muted { color: var(--text-2); }
+.private-tag { gap: 2px; }
+.private-tag .info-btn { min-width: 24px; min-height: 24px; }
+.settings-list.consent-status > div { align-items: center; gap: 12px; }
+
+/* ---------------------------------------------------------------- voice commands (higher tier) */
+.voice-panel { display: grid; justify-items: center; gap: 10px; text-align: center; padding: 24px 12px; border: 1px solid var(--line); border-radius: 20px; }
+.voice-mic { width: 96px; height: 96px; border-radius: 50%; border: 0; background: var(--blue); color: #fff; display: grid; place-items: center; cursor: pointer; }
+.voice-mic:focus-visible { box-shadow: var(--focus); outline: none; }
+.voice-mic.listening { background: var(--danger); animation: voice-pulse 1.2s ease-in-out infinite; }
+@keyframes voice-pulse { 50% { transform: scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .voice-mic.listening { animation: none; } }
+.voice-heard { font-size: var(--step-1); min-height: 1.5em; margin: 0; }
+.voice-answer { min-height: 1.5em; font-weight: 500; }
+.voice-examples { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+[hidden] { display: none !important; }
+.consent-body fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.consent-body fieldset legend { padding: 0; margin-bottom: 6px; }
+form fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }

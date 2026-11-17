@@ -51,7 +51,7 @@ class WelcomeScreen extends StatelessWidget {
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Icon(Icons.verified_user_outlined, size: 18, color: p.ok),
         const SizedBox(width: 10),
-        Expanded(child: Text('Your household’s information is private. Only people you invite can see it, and your password is never stored in readable form.',
+        Expanded(child: Text('We never sell your information. Health details are saved only with your permission, and you choose who can see them and for how long.',
             style: Theme.of(context).textTheme.bodySmall)),
       ]),
     ]);

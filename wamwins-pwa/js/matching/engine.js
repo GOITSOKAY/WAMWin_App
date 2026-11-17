@@ -161,7 +161,7 @@ export async function rankRecipes(inp, units) {
         const required = available.length + missing.length;
         const ratio = required ? available.length / required : 1;
         const factors = [
-            { code: 'SAFETY', score: 0, weight: 1, explanation: `Safe for ${inp.members.map(m => m.display_name).join(', ') || 'household'}: no allergen, intolerance${inp.constraints.diets.length ? ', diet' : ''} or hard health-rule conflicts${omittedOptional.length ? `; omit optional ${omittedOptional.join(', ')}` : ''}` },
+            { code: 'SAFETY', score: 0, weight: 1, explanation: `Fits saved needs for ${inp.members.map(m => m.display_name).join(', ') || 'household'}: no allergen, intolerance${inp.constraints.diets.length ? ', diet' : ''} or hard health-rule conflicts found${omittedOptional.length ? `; omit optional ${omittedOptional.join(', ')}` : ''}. Always check labels` },
             { code: 'INVENTORY', score: ratio * WEIGHTS.INVENTORY, weight: WEIGHTS.INVENTORY, explanation: `${available.length} of ${required} ingredients already in your kitchen` },
             { code: 'USE_SOON', score: Math.min(useSoon.length, 3) * WEIGHTS.USE_SOON, weight: WEIGHTS.USE_SOON, explanation: useSoon.length ? `Uses soon-to-expire: ${useSoon.map(u => u.name).join(', ')}` : 'No use-soon items involved' },
             { code: 'EQUIPMENT', score: 0, weight: 0, explanation: inp.equipmentEvaluated ? 'You have the equipment needed' : 'Equipment not checked (equipment module unavailable)' },

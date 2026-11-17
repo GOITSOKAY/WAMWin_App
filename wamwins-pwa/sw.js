@@ -1,5 +1,5 @@
 /* WAMWins service worker: offline app shell (cache-first for versioned assets, network-first for the page). */
-const VERSION = 'wamwins-shell-v8';   // v2: new logos (bump on every release so installed apps update)
+const VERSION = 'wamwins-shell-v10';   // v10: privacy & consent center, legal notices, voice commands (higher tier)   // v2: new logos (bump on every release so installed apps update)
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'assets/brand/app-icon.png', 'assets/brand/logo-desktop.png', 'assets/brand/logo-desktop-compact.png', 'assets/icons/icon-192.png', 'assets/icons/icon-512.png', 'assets/icons/maskable-512.png', 'assets/icons/favicon-32.png',
@@ -9,11 +9,13 @@ const SHELL = [
   'js/inquiry/reference.js', 'js/inquiry/questions.js', 'js/inquiry/draft.js', 'js/inquiry/provisioning.js',
   'js/screens/auth-layout.js', 'js/screens/welcome.js', 'js/screens/login.js', 'js/screens/register.js', 'js/screens/home.js', 'js/screens/settings.js',
   'js/screens/setup/setup.js', 'js/screens/setup/step-about.js', 'js/screens/setup/step-household.js', 'js/screens/setup/step-kitchens.js',
-  'js/screens/setup/step-family.js', 'js/screens/setup/step-food.js', 'js/screens/setup/step-review.js',
+  'js/screens/setup/step-food.js', 'js/screens/setup/step-review.js',
   'js/screens/match.js', 'js/matching/engine.js', 'js/matching/reference.js', 'js/matching/units.js', 'js/matching/inputs.js', 'js/matching/store.js',
   'js/screens/inventory.js', 'js/inventory/ledger.js', 'js/inventory/new-food-form.js',
   'js/inquiry/adapter.js', 'js/inquiry/step-map.js', 'js/screens/setup/step-health.js', 'js/screens/setup/step-appliances.js', 'js/screens/setup/step-kitchenware.js',
   'js/components/info.js', 'js/components/tier-locked.js', 'js/components/autocomplete.js', 'js/components/reference-image.js',
+  'js/privacy/notices.js', 'js/privacy/consent.js', 'js/privacy/access.js', 'js/screens/privacy.js', 'js/screens/legal.js',
+  'js/voice/entry.js', 'js/voice/engine.js', 'js/screens/voice.js',
 ];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL))); });
 self.addEventListener('activate', (e) => {

@@ -43,7 +43,8 @@ void main() {
     await t.enterText(find.widgetWithText(TextField, 'Your name'), 'Ana Santos');
     await t.enterText(find.widgetWithText(TextField, 'Email'), 'ana@example.com');
     await t.enterText(find.widgetWithText(TextField, 'Password'), 'Mango-Sunset-2026!');
-    await t.tap(find.byType(Checkbox).first);
+    for (var i = 0; i < 3; i++) { await t.tap(find.byType(Checkbox).at(i)); }   // 18+, Terms, Privacy Notice (nothing pre-ticked)
+    await t.pump();
     await tapText(t, 'Create account');
     await pumpUntil(t, find.text('About You'));
     expect(find.text('Step 1 of 7: About You'), findsOneWidget);

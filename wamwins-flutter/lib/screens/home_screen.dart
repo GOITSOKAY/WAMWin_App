@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../app/scope.dart';
 import '../app/theme.dart';
 import '../core/db.dart';
+import '../privacy/privacy_service.dart';
+import '../voice/voice_gate.dart';
 import '../ui/brand.dart';
 import '../ui/widgets.dart';
 
@@ -22,7 +24,7 @@ class _HomeData {
         sections = db.select('SELECT storage_instance_id, name FROM storage_section WHERE household_id = ? AND deleted_at IS NULL ORDER BY ordinal', [hh]),
         items = db.select('SELECT i.storage_instance_id, i.quantity, m.canonical_name AS name, u.symbol FROM inventory_item i JOIN item_master m ON m.id = i.item_master_id '
             'JOIN unit_of_measure u ON u.code = i.unit_code WHERE i.household_id = ? AND i.deleted_at IS NULL AND i.quantity > 0 ORDER BY m.search_name LIMIT 200', [hh]),
-        members = db.select('SELECT id, display_name, linked_user_id FROM family_member WHERE household_id = ? AND deleted_at IS NULL ORDER BY (linked_user_id IS NULL), created_at', [hh]),
+        members = db.select('SELECT id, household_id, display_name, linked_user_id, age_band FROM family_member WHERE household_id = ? AND deleted_at IS NULL ORDER BY (linked_user_id IS NULL), created_at', [hh]),
         allergies = db.select('SELECT a.member_id, al.name FROM member_allergy a JOIN allergen al ON al.code = a.allergen_code WHERE a.household_id = ? AND a.deleted_at IS NULL', [hh]),
         diets = db.select('SELECT d.member_id, p.name FROM member_dietary_requirement d JOIN dietary_pattern p ON p.code = d.dietary_pattern_code WHERE d.household_id = ? AND d.deleted_at IS NULL', [hh]),
         modules = db.select("SELECT m.module_code, i.display_name FROM household_module_instance i JOIN module_definition m ON m.id = i.module_id "
@@ -58,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final s = AppScope.of(context);
     final p = Palette.of(context);
+    final privacy = PrivacyService(s.db);
     final d = _d;
     if (d == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
     final wide = MediaQuery.sizeOf(context).width >= 1024;
@@ -103,10 +106,16 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(width: 12),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(m['display_name'] as String, style: const TextStyle(fontWeight: FontWeight.w500)),
-          Wrap(spacing: 4, runSpacing: 4, children: [
-            for (final a in d.allergies.where((x) => x['member_id'] == m['id'])) Tag('No ${(a['name'] as String).toLowerCase()}', danger: true),
-            for (final x in d.diets.where((x) => x['member_id'] == m['id'])) Tag(x['name'] as String),
-          ]),
+          // Person-level privacy: tags only for yourself, profiles you manage, or through an active access grant.
+          Builder(builder: (_) {
+            final uid = widget.user['id'] as String, mem = privacy.membershipOf(uid), gs = privacy.grants(m['household_id'] as String);
+            bool see(String cat) => PrivacyService.relation(userId: uid, membership: mem, member: m, grants: gs, category: cat) != null;
+            return Wrap(spacing: 4, runSpacing: 4, children: [
+              if (see('ALLERGIES')) for (final a in d.allergies.where((x) => x['member_id'] == m['id'])) Tag('No ${(a['name'] as String).toLowerCase()}', danger: true),
+              if (see('DIETS')) for (final x in d.diets.where((x) => x['member_id'] == m['id'])) Tag(x['name'] as String),
+              if (!see('ALLERGIES') || !see('DIETS')) Tag('Health details private'),
+            ]);
+          }),
         ])),
       ])),
     ]));
@@ -132,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Row(children: [
         const Icon(Icons.restaurant_menu, color: Brand.navy),
         const SizedBox(width: 12),
-        const Expanded(child: Text('Find meals that are safe for everyone and use what you have.', style: TextStyle(color: Brand.navy, fontWeight: FontWeight.w500))),
+        const Expanded(child: Text('Find meal ideas that fit everyone’s saved food needs and use what you have.', style: TextStyle(color: Brand.navy, fontWeight: FontWeight.w500))),
         const SizedBox(width: 12),
         PrimaryButton(label: 'What can we cook?', expand: false, onPressed: () => s.router.go('match')),
       ]),
@@ -142,7 +151,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: wamAppBar(context, titleSpacing: 20,
           title: Row(children: [const BrandLogo(kind: LogoKind.bar), if (!isLargeScreen(context)) ...[const SizedBox(width: 10), const Wordmark(size: 20)]]),
-          actions: [IconButton(tooltip: 'Settings', icon: const Icon(Icons.settings_outlined), onPressed: () => s.router.go('settings'))]),
+          actions: [
+            if (VoiceGate.showMic(s, widget.user)) IconButton(tooltip: 'Voice command', icon: const Icon(Icons.mic_none), onPressed: () => s.router.go('voice')),
+            IconButton(tooltip: 'Settings', icon: const Icon(Icons.settings_outlined), onPressed: () => s.router.go('settings'))]),
       body: ListView(padding: const EdgeInsets.fromLTRB(20, 20, 20, 32), children: [ContentWidth(max: 1120, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Text('$_greeting, $first', style: TextStyle(color: p.text2, fontWeight: FontWeight.w500)),
         Semantics(header: true, child: Text('Here is what WAMWins knows about your kitchen stuff!', style: Theme.of(context).textTheme.headlineMedium)),

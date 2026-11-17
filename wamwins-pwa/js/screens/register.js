@@ -1,6 +1,7 @@
 import { h, field } from '../core/dom.js';
 import { authLayout, passwordInput } from './auth-layout.js';
 import { Auth, AuthError, passwordStrength, validEmail } from '../security/auth.js';
+import { legalLinks, openDoc } from '../privacy/consent.js';
 
 export async function mount(root, ctx) {
   const name = h('input', { class: 'input', type: 'text', autocomplete: 'name', required: true, maxlength: 80 });
@@ -12,8 +13,11 @@ export async function mount(root, ctx) {
   const fPw = field({ label: 'Password', hint: 'At least 10 characters. A short phrase is easy to remember and hard to guess.', input: pw.input });
   fPw.replaceChild(pw.wrap, pw.input); pw.wrap.prepend(pw.input);   // field() moved the input; put it back inside the show/hide wrapper
   fPw.insertBefore(meter, fPw.querySelector('.field-error'));
+  // Nothing pre-ticked. Health-data consent is asked separately, at the moment health details are first entered.
+  const age = h('input', { type: 'checkbox', id: 'c-age', required: true });
   const terms = h('input', { type: 'checkbox', id: 'c-terms', required: true });
-  const health = h('input', { type: 'checkbox', id: 'c-health' });
+  const privacy = h('input', { type: 'checkbox', id: 'c-privacy', required: true });
+  const link = (code, text) => h('button', { type: 'button', class: 'btn-text inline', text, onclick: () => openDoc(code) });
   const formError = h('p', { class: 'form-error', role: 'alert' });
   const submit = h('button', { class: 'btn btn-primary btn-block', type: 'submit', text: 'Create account' });
 
@@ -24,12 +28,14 @@ export async function mount(root, ctx) {
   });
   const form = h('form', { class: 'stack', novalidate: true },
     fName, fEmail, fPw,
-    h('div', {},
-      h('label', { class: 'check', for: 'c-terms' }, terms, h('span', { text: 'I agree to the WAMWins Terms of Use and Privacy Policy.' })),
-      h('label', { class: 'check', for: 'c-health' }, health,
-        h('span', {}, 'Use my family’s allergies and diets to keep meal suggestions safe. ', h('span', { class: 'hint', text: 'Optional. You can change this later.' })))),
+    h('fieldset', { class: 'stack-s' }, h('legend', { class: 'sr-only', text: 'Agreements' }),
+      h('label', { class: 'check', for: 'c-age' }, age, h('span', { text: 'I am 18 or older.' })),
+      h('label', { class: 'check', for: 'c-terms' }, terms, h('span', {}, 'I agree to the ', link('TERMS', 'Terms of Use'), '.')),
+      h('label', { class: 'check', for: 'c-privacy' }, privacy, h('span', {}, 'I have read the ', link('PRIVACY_NOTICE', 'Privacy Notice'), ' and the ', link('CONSUMER_HEALTH_DATA_POLICY', 'Consumer Health Data Privacy Policy'), '.'))),
+    h('p', { class: 'hint', text: 'We never sell your information or use it for ads. We ask for separate permission before saving any health or allergy details.' }),
     formError, submit,
-    h('p', { class: 'hint', style: { textAlign: 'center' }, text: 'Your account is saved securely on this device.' }));
+    h('p', { class: 'hint', style: { textAlign: 'center' }, text: 'Your account is stored on this device and protected by your password.' }),
+    legalLinks());
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -39,11 +45,12 @@ export async function mount(root, ctx) {
     const s = passwordStrength(pw.input.value, [name.value, email.value.split('@')[0]]);
     fPw.setError(s.score >= 2 ? '' : s.message);
     if (!name.value.trim() || !validEmail(email.value) || s.score < 2) return form.querySelector('[aria-invalid="true"]')?.focus();
-    if (!terms.checked) { formError.textContent = 'Please accept the Terms of Use and Privacy Policy to create an account.'; return terms.focus(); }
+    if (!age.checked) { formError.textContent = 'WAMWins accounts are for adults 18 and older. A parent or guardian can add children to a household.'; return age.focus(); }
+    if (!terms.checked || !privacy.checked) { formError.textContent = 'Please agree to the Terms of Use and confirm you have read the Privacy Notice to create an account.'; return (terms.checked ? privacy : terms).focus(); }
     submit.disabled = true; submit.textContent = 'Creating account…';
     try {
       await Auth.register({ name: name.value, email: email.value, password: pw.input.value,
-        consents: { TERMS: true, PRIVACY_POLICY: true, HEALTH_DATA_PROCESSING: health.checked } });
+        consents: { AGE_18_PLUS: true, TERMS: true, PRIVACY_POLICY: true } });
       ctx.go('setup/about');
     } catch (err) {
       formError.textContent = err instanceof AuthError ? err.message : 'Your account could not be created. Please try again.';

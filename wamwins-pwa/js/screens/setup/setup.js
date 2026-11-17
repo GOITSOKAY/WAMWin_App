@@ -77,6 +77,8 @@ export async function mount(root, ctx) {
     errorBox.textContent = '';
     const err = step.validate?.();
     if (err) { errorBox.textContent = err; errorBox.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+    const ok = step.confirm ? await step.confirm() : true;                                  // consent pop-ups before saving
+    if (ok !== true) { if (typeof ok === 'string') { errorBox.textContent = ok; errorBox.scrollIntoView({ block: 'center', behavior: 'smooth' }); } return; }
     next.disabled = true;
     try {
       if (step.submit) { await step.submit(); return; }

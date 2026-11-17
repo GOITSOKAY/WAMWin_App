@@ -15,7 +15,7 @@ const stepSpecs = [
   StepSpec('about', 'About you', 'A few quick questions so WAMWins fits the way you cook.'),
   StepSpec('household', 'Your household', 'Tell us who you’re planning for and which kitchens you have.'),
   StepSpec('kitchens', 'Kitchens & equipment', 'Count what you actually have. WAMWins only sets up what you choose here.'),
-  StepSpec('family', 'Family & health', 'Allergies and diets keep meal suggestions safe for everyone at your table.'),
+  StepSpec('family', 'Family & health', 'Saved allergies and diets help WAMWins leave out meal ideas that don’t fit the people at your table.'),
   StepSpec('food', 'Food on hand', 'Add a few things you have now, or skip and add food later.'),
 ];
 
@@ -260,7 +260,7 @@ class _FamilyStepState extends State<FamilyStep> {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       QBlock(first: true, children: [CheckboxListTile(value: consent, contentPadding: EdgeInsets.zero, controlAffinity: ListTileControlAffinity.leading,
           onChanged: (v) => update(() => d.healthConsent = v ?? false),
-          title: const Text('Use health details to keep meal suggestions safe', style: TextStyle(fontWeight: FontWeight.w500)),
+          title: const Text('Let WAMWins save and use these health details for meal matching', style: TextStyle(fontWeight: FontWeight.w500)),
           subtitle: const Text('Allergies, diets and health goals are only visible to household members you allow. You can turn this off anytime.'))]),
       QBlock(title: 'Who are you planning meals for?',
           hint: 'You said ${d.householdSize} ${d.householdSize == 1 ? 'person lives' : 'people live'} here. ${d.family.length} added so far.',
@@ -411,7 +411,7 @@ class _FoodStepState extends State<FoodStep> {
             items: [for (final z in _zones) DropdownMenuItem(value: z.code, child: Text(z.name))], onChanged: (v) => setLocal(() => zone = v ?? zone)),
         const SizedBox(height: 16),
         const Text('Does it contain any of these? (optional)', style: TextStyle(fontWeight: FontWeight.w500)),
-        Text('Helps keep meal suggestions safe for people with allergies.', style: Theme.of(ctx).textTheme.bodySmall),
+        Text('Helps WAMWins leave this food out for people with a matching allergy. Always check the product label.', style: Theme.of(ctx).textTheme.bodySmall),
         const SizedBox(height: 8),
         ChipSelect(options: c.allergens, selected: allergens, warn: true, onChanged: (v) => setLocal(() => allergens = v)),
       ])),

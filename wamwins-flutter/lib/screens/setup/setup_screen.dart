@@ -18,7 +18,7 @@ import 'modules_v2.dart';
 /// into records. The draft and reference lists are scoped to this screen and released when it closes.
 const _titles = {
   'about': ('About You', 'A few questions about you and your household, so WAMWins fits the way your home runs.'),
-  'health': ('Health Profiles', 'Dietary needs help keep meal suggestions safe for everyone at your table.'),
+  'health': ('Health Profiles', 'Saved food needs help WAMWins leave out meal ideas that don’t fit the people at your table. Optional, and saved only with your permission.'),
   'kitchens': ('Kitchens & Storages', 'Add each kitchen and where you keep food. WAMWins sets up only what you choose.'),
   'appliances': ('Kitchen Appliances', 'Tick the appliances you have. Details are optional and can be added any time.'),
   'kitchenware': ('Utensils & Kitchenware', 'Tick what you have and how many. You can skip this and add it later.'),
@@ -40,7 +40,6 @@ class _SetupScreenState extends State<SetupScreen> {
   late Catalog _catalog;
   late String _step, _userId;
   String? _hh;
-  late bool _consentAtStart;
   List<DbRow> _known = const [];
   bool _busy = false, _loaded = false;
   String? _error;
@@ -58,8 +57,7 @@ class _SetupScreenState extends State<SetupScreen> {
     _ref = EntryRef.load(s.db);
     _catalog = Catalog.load(s.db, householdId: _hh);
     _d = s.profile.loadDraftV2(widget.user, _ref);
-    _consentAtStart = s.profile.healthConsentGranted(_userId);
-    _d.health['consent'] ??= _consentAtStart;
+    _d.health['consent'] = s.profile.healthConsentGranted(_userId);       // the consent ledger decides, never a cached draft flag
     if (_hh != null) _known = s.db.select('SELECT id, display_name, relationship, age_band, linked_user_id FROM family_member WHERE household_id = ? AND deleted_at IS NULL', [_hh]);
     _d.addListener(_onDraft);
   }
@@ -90,6 +88,11 @@ class _SetupScreenState extends State<SetupScreen> {
     final s = AppScope.of(context);
     final err = _validate();
     if (err != null) return setState(() => _error = err);
+    if (_step == 'health') {                                                   // per-person consent pop-ups before saving
+      final msg = await confirmOnBehalf(context, _d, _userId);
+      if (msg != null) return setState(() => _error = msg);
+      if (!mounted) return;
+    }
     setState(() { _busy = true; _error = null; });
     try {
       if (_step == 'review') {
@@ -101,7 +104,6 @@ class _SetupScreenState extends State<SetupScreen> {
         return;
       }
       if (_step == 'about') _hh = s.profile.ensureHouseholdV2(widget.user, _d);
-      if (_step == 'health' && (_d.health['consent'] == true) != _consentAtStart) s.profile.recordHealthConsent(_userId, _d.health['consent'] == true);
       final next = steps[_index + 1];
       s.profile.saveV2(widget.user, _d, next);                       // saved after every module (resume, offline)
       s.router.go('setup/$next');

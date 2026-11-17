@@ -33,7 +33,7 @@ export async function mount(root, ctx) {
       h('button', { class: 'btn btn-primary btn-block', type: 'button', text: 'Create Account', onclick: () => ctx.go('register') }),
       h('button', { class: 'btn btn-ghost btn-block', type: 'button', text: 'Log In', onclick: () => ctx.go('login') })),
     h('p', { class: 'privacy-line' }, icon('shield', 18),
-      h('span', { text: 'Your household’s information is private. Only people you invite can see it, and your password is never stored in readable form.' }))));
+      h('span', { text: 'We never sell your information. Health details are saved only with your permission, and you choose who can see them and for how long.' }))));
   root.querySelector('h1').focus?.();
   return { dispose() { off(); } };
 }

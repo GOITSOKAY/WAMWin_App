@@ -33,7 +33,7 @@ Future<({String name, String category, String unit, String zone, List<String> al
           items: [for (final x in newFoodZones) DropdownMenuItem(value: x.code, child: Text(x.name))], onChanged: (v) => setLocal(() => z = v ?? z)),
       const SizedBox(height: 16),
       const Text('Does it contain any of these? (optional)', style: TextStyle(fontWeight: FontWeight.w500)),
-      Text('Helps keep meal suggestions safe for people with allergies.', style: Theme.of(ctx).textTheme.bodySmall),
+      Text('Helps WAMWins leave this food out for people with a matching allergy. Always check the product label.', style: Theme.of(ctx).textTheme.bodySmall),
       const SizedBox(height: 8),
       ChipSelect(options: c.allergens, selected: allergens, warn: true, onChanged: (v) => setLocal(() => allergens = v)),
     ])),

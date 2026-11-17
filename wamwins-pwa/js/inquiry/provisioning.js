@@ -139,7 +139,10 @@ export async function provision(user, session, draft) {
       for (const old of (await t.byIndex(table, 'household_id', hh)).filter(r => r.member_id === memberId)) await t.del(table, old.id);
       for (const r of rows) await t.insert(table, { id: crypto.randomUUID(), household_id: hh, member_id: memberId, created_source_code: 'MANUAL', ...r });
     };
-    if (draft.health.needed === 'YES' && draft.health.consent === true) {
+    // The consent ledger decides (latest HEALTH_DATA_PROCESSING row for this user), not only the draft flag.
+    const healthLedger = (await t.byIndex('consent_record', 'user_id', user.id)).filter(c => c.consent_type === 'HEALTH_DATA_PROCESSING' && !c.subject_ref)
+      .sort((a, b) => a.recorded_at.localeCompare(b.recorded_at)).at(-1);
+    if (draft.health.needed === 'YES' && draft.health.consent === true && healthLedger?.granted === true) {
       for (const p of draft.health.people) {
         const memberId = p.isMe ? selfId : await once(`member:${p.key}`, 'family_member', async () => {
           if (p.existingId && await t.get('family_member', p.existingId)) return { id: p.existingId };

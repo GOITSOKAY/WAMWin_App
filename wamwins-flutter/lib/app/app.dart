@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 
 import '../core/db.dart';
 import '../inquiry/profile_store.dart';
+import '../privacy/privacy_service.dart';
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
+import '../screens/privacy_screen.dart';
 import '../screens/inventory_screen.dart';
 import '../screens/match_screen.dart';
 import '../screens/register_screen.dart';
@@ -12,6 +14,7 @@ import '../screens/settings_screen.dart';
 import '../screens/setup/setup_screen.dart';
 import '../screens/welcome_screen.dart';
 import '../ui/brand.dart';
+import '../voice/voice_screen.dart';
 import 'scope.dart';
 import 'theme.dart';
 
@@ -74,13 +77,19 @@ class _RootViewState extends State<RootView> {
     return s.profile.isComplete(id) ? 'home' : 'setup/${s.profile.currentStepV2(id)}';      // v1 steps resume in v2 modules
   }
 
+  bool _retentionRan = false;
   Future<void> _resolve() async {
     final id = ++_resolveId;
     try {
       final user = await s.auth.currentUser();
       if (id != _resolveId || !mounted) return;
       final name = s.router.name;
-      const known = {'welcome', 'login', 'register', 'setup', 'home', 'settings', 'match', 'inventory'};
+      if (user != null && !_retentionRan) {                                // retention schedule (Privacy Notice); never blocks a screen
+        _retentionRan = true;
+        final hh = s.profile.householdIdFor(user['id'] as String);
+        if (hh != null) { try { PrivacyService(s.db).applyRetention(hh); } catch (_) {} }
+      }
+      const known = {'welcome', 'login', 'register', 'setup', 'home', 'settings', 'match', 'inventory', 'privacy', 'voice'};
       if (user == null && !const {'welcome', 'login', 'register'}.contains(name)) return s.router.go('welcome', replace: true);
       if (user != null && (const {'welcome', 'login', 'register', ''}.contains(name) || !known.contains(name))) return s.router.go(_resume(user), replace: true);
       if (user != null && (name == 'home' || name == 'match' || name == 'inventory') && _resume(user) != 'home') return s.router.go(_resume(user), replace: true);
@@ -103,6 +112,8 @@ class _RootViewState extends State<RootView> {
           'settings' => SettingsScreen(user: user!),
           'match' => MatchScreen(key: const ValueKey('match'), user: user!),
           'inventory' => InventoryScreen(key: const ValueKey('inventory'), user: user!),
+          'privacy' => PrivacyScreen(key: const ValueKey('privacy'), user: user!),
+          'voice' => VoiceScreen(key: const ValueKey('voice'), user: user!),
           _ => const WelcomeScreen(),
         };
       });

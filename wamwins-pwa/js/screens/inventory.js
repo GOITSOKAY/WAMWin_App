@@ -35,7 +35,7 @@ export async function mount(root, ctx) {
   const caps = { history: await canUse(hh, 'INVENTORY_HISTORY'), soon: await canUse(hh, 'USE_SOON_ALERTS'), low: await canUse(hh, 'LOW_STOCK_ALERTS') };
   let data = await load(hh);
   let view = { name: 'list' };
-  const filter = { q: '', place: 'ALL', show: 'IN_STOCK' };
+  const filter = { q: ctx.arg?.startsWith('q:') ? decodeURIComponent(ctx.arg.slice(2)) : '', place: 'ALL', show: 'IN_STOCK' };   // q: from a voice command
   let limit = PAGE;
 
   const title = h('h1', { tabindex: '-1', style: { fontSize: 'var(--step-1)' }, text: 'Inventory' });

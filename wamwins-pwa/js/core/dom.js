@@ -36,7 +36,7 @@ const ICONS = {
   minus: 'M5 12h14', lock: 'M6 11h12v9H6zM8 11V8a4 4 0 0 1 8 0v3', camera: 'M4 8h4l2-3h4l2 3h4v11H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8',
   image: 'M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4M15 9h.01', share: 'M12 15V4M8 8l4-4 4 4M5 13v7h14v-7', close: 'M6 6l12 12M18 6 6 18', edit: 'M4 20h4L19 9l-4-4L4 16zM14 6l4 4',
   clock: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zm0-13v5l3 2', basket: 'M3 9h18l-2 11H5zM8 9l4-6 4 6', info: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zm0-10v6m0-9h.01',
-  download: 'M12 4v11m-5-5 5 5 5-5M5 20h14', trash: 'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3', search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm10 3-5-5',
+  mic: 'M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm-6-3a6 6 0 0 0 12 0M12 18v3',   download: 'M12 4v11m-5-5 5 5 5-5M5 20h14', trash: 'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3', search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zm10 3-5-5',
 };
 export function icon(name, size = 22) {
   const ns = 'http://www.w3.org/2000/svg';

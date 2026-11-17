@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../app/scope.dart';
 import '../../app/theme.dart';
 import '../../core/ids.dart';
 import '../../inquiry/catalog.dart';
 import '../../inquiry/draft_v2.dart';
 import '../../inquiry/entry_ref.dart';
+import '../../privacy/consent_dialog.dart';
+import '../../privacy/privacy_service.dart';
 import '../../ui/autocomplete_field.dart';
 import '../../ui/info.dart';
 import '../../ui/reference_photos.dart';
@@ -102,6 +105,24 @@ class _AboutModuleState extends State<AboutModule> {
 bool _hasNeeds(J p) => [for (final k in ['allergies', 'intolerances', 'diets', 'health', 'avoid', 'prioritize']) ((p[k] as List?) ?? const []).length].any((n) => n > 0) ||
     ((p['meals'] as Map?) ?? const {}).values.any((m) => ((m['avoid'] as List?)?.isNotEmpty ?? false) || ((m['prioritize'] as List?)?.isNotEmpty ?? false) || ((m['note'] as String?)?.trim().isNotEmpty ?? false));
 
+/// Before the health module is saved: for each other person with details, the account holder confirms they may
+/// enter them (CHILD_PROFILE for children and teens, ADULT_ON_BEHALF for other adults). Returns an error or null.
+Future<String?> confirmOnBehalf(BuildContext context, DraftV2 d, String userId) async {
+  final h = d.health;
+  if (h['needed'] != 'YES' || h['consent'] != true) return null;
+  final privacy = PrivacyService(AppScope.of(context).db);
+  for (final p in d.people.where((p) => p['isMe'] != true && _hasNeeds(p))) {
+    final type = PrivacyService.minorBands.contains(p['ageBand']) ? 'CHILD_PROFILE' : 'ADULT_ON_BEHALF';
+    final ref = (p['existingId'] ?? p['key']) as String;
+    if (privacy.hasConsent(userId, type, ref)) continue;
+    if (!context.mounted) return null;
+    if (!await askConsent(context, userId, type, subjectRef: ref, subjectName: p['name'] as String?)) {
+      return '${p['name']}’s details can’t be saved without your confirmation. Confirm, or remove ${p['name']}’s profile.';
+    }
+  }
+  return null;
+}
+
 String? validateHealth(DraftV2 d) {
   final h = d.health;
   if (h['needed'] == null) return 'Choose Yes or No to continue.';
@@ -125,6 +146,10 @@ class _HealthModuleState extends State<HealthModule> {
     for (final i in widget.c.catalog.items) Suggestion(i.name, value: {'label': i.name, 'itemId': i.id, 'categoryCode': null}),
     for (final g in widget.c.catalog.foodGroups) Suggestion(g.name, note: 'food group', value: {'label': g.name, 'itemId': null, 'categoryCode': g.code}),
   ];
+  Future<void> _askHealth() async {
+    final ok = await askConsent(context, widget.c.userId, 'HEALTH_DATA_PROCESSING');
+    if (mounted) setState(() { widget.c.d.health['consent'] = ok; widget.c.d.changed(); });
+  }
   J _person(Map<String, dynamic> o) => {'key': newId(), 'name': '', 'relationship': 'CHILD', 'ageBand': 'CHILD', 'isMe': false, 'allergies': <String>[], 'intolerances': <String>[],
     'diets': <String>[], 'health': <String>[], 'avoid': <J>[], 'prioritize': <J>[], 'meals': <String, dynamic>{}, ...o};
 
@@ -164,12 +189,12 @@ class _HealthModuleState extends State<HealthModule> {
         ],
         const SizedBox(height: 8), const Text('Age group', style: TextStyle(fontWeight: FontWeight.w500)), const SizedBox(height: 6),
         ChipSelect(options: ageBands, selected: [pr['ageBand'] as String], single: true, onChanged: (v) => set(() => pr['ageBand'] = v.first)),
-        sec('Allergies', [Text('Recipes with these are never suggested.', style: Theme.of(context).textTheme.bodySmall), const SizedBox(height: 6),
+        sec('Allergies', [Text('Recipes listing these ingredients are left out of suggestions. Always check product labels.', style: Theme.of(context).textTheme.bodySmall), const SizedBox(height: 6),
           ChipSelect(options: ref.allergens, selected: codes('allergies'), warn: true, onChanged: (v) => set(() => pr['allergies'] = v))]),
         sec('Intolerances', [Text('Foods that cause discomfort (for example lactose).', style: Theme.of(context).textTheme.bodySmall), const SizedBox(height: 6),
           ChipSelect(options: ref.allergens, selected: codes('intolerances'), warn: true, onChanged: (v) => set(() => pr['intolerances'] = v))]),
         sec('Dietary requirements', [ChipSelect(options: ref.diets, selected: codes('diets'), onChanged: (v) => set(() => pr['diets'] = v))]),
-        sec('Health-related food requirements', [Text('Used to rank meals, not to give medical advice.', style: Theme.of(context).textTheme.bodySmall), const SizedBox(height: 6),
+        sec('Health-related food requirements', [Text('Food preferences used to rank meal ideas. WAMWins does not give medical advice; follow your clinician’s guidance.', style: Theme.of(context).textTheme.bodySmall), const SizedBox(height: 6),
           ChipSelect(options: ref.healthGoals, selected: codes('health'), onChanged: (v) => set(() => pr['health'] = v))]),
         sec('Foods to avoid', [_tags('Add a food or food group to avoid', pr['avoid'] as List)]),
         sec('Foods to prioritize', [_tags('Add a food or food group to prioritize', pr['prioritize'] as List)]),
@@ -190,16 +215,24 @@ class _HealthModuleState extends State<HealthModule> {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       QBlock(first: true, children: [
         const LabelWithInfo('Does anyone in your household require special dietary management?', title: 'Why we ask', body: [
-          'Allergies, intolerances and diets decide which meals are safe to suggest. Allergies are always a hard stop.',
-          'Health details are optional, stored separately from your kitchen, and only with your permission. WAMWins does not diagnose or give medical advice.']),
+          'Allergies, intolerances and diets decide which meal ideas are left out. A recipe listing a saved allergen is never suggested.',
+          'Health details are optional, stored separately from your kitchen, and saved only with your permission. You choose who else can see them and for how long.',
+          'WAMWins is not a medical device and does not diagnose, treat or give medical advice. Always check product labels.']),
         const SizedBox(height: 8),
-        ChoiceList(options: const [Option('YES', 'Yes'), Option('NO', 'No')], value: h['needed'] as String?, onChanged: (v) => set(() => h['needed'] = v)),
+        ChoiceList(options: const [Option('YES', 'Yes'), Option('NO', 'No')], value: h['needed'] as String?, onChanged: (v) async {
+          final asked = PrivacyService(AppScope.of(context).db).latestConsent(widget.c.userId, 'HEALTH_DATA_PROCESSING') != null;
+          set(() => h['needed'] = v);
+          if (v == 'YES' && h['consent'] != true && !asked) await _askHealth();       // just-in-time pop-up, asked once
+        }),
       ]),
       if (h['needed'] == 'YES') QBlock(children: [
-        CheckboxListTile(value: h['consent'] == true, contentPadding: EdgeInsets.zero, controlAffinity: ListTileControlAffinity.leading, onChanged: (v) => set(() => h['consent'] = v ?? false),
-            title: const Text('Use these health details to keep meal suggestions safe', style: TextStyle(fontWeight: FontWeight.w500)),
-            subtitle: const Text('Stored only on your household’s records, visible only to members you allow. Turn this off or change the details any time. This is not a medical diagnosis.')),
-        if (h['consent'] != true) Text('Without this, WAMWins won’t store health details. You can continue and add them later.', style: Theme.of(context).textTheme.bodySmall),
+        if (h['consent'] == true) const Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Icon(Icons.shield_outlined, size: 18), SizedBox(width: 6),
+          Expanded(child: Text('You agreed to let WAMWins save these health details. Only you and the people you choose can see them. Withdraw or choose who can see them in Settings › Privacy & sharing.'))])
+        else ...[
+          const Text('Health details won’t be saved without your permission. You can continue without them and add them later.'),
+          const SizedBox(height: 8),
+          GhostButton(expand: false, onPressed: _askHealth, child: const Text('Review and give permission')),
+        ],
       ]),
       if (h['needed'] == 'YES' && h['consent'] == true) QBlock(title: 'People who need special dietary management', children: [
         for (final pr in List.of(d.people)) _card(pr),

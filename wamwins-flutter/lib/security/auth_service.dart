@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import '../core/db.dart';
 import '../core/ids.dart';
+import '../privacy/notices.dart';
 import 'crypto.dart';
 import 'secure_store.dart';
 
@@ -62,6 +63,7 @@ class AuthService {
     if (!validEmail(mail)) throw AuthException('EMAIL', 'Enter a valid email address, like name@example.com.');
     final s = passwordStrength(password, [name, mail.split('@').first]);
     if (s.score < 2) throw AuthException('PASSWORD', s.message);
+    if (consents['AGE_18_PLUS'] != true) throw AuthException('CONSENT', 'WAMWins accounts are for adults 18 and older.');
     if (consents['TERMS'] != true || consents['PRIVACY_POLICY'] != true) {
       throw AuthException('CONSENT', 'Please accept the Terms of Use and Privacy Policy to create an account.');
     }
@@ -77,8 +79,8 @@ class AuthService {
       db.run('INSERT INTO local_auth_identity(id, user_id, provider_subject, secret_hash, salt, iterations) VALUES (?, ?, ?, ?, ?, ?)',
           [newId(), userId, mail, base64.encode(hash), base64.encode(salt), iterations]);
       consents.forEach((type, granted) => db.run(
-          "INSERT INTO consent_record(id, user_id, consent_type, document_version, granted) VALUES (?, ?, ?, '1', ?)",
-          [newId(), userId, type, granted ? 1 : 0]));
+          "INSERT INTO consent_record(id, user_id, consent_type, document_code, document_version, method, granted) VALUES (?, ?, ?, ?, ?, 'REGISTRATION', ?)",
+          [newId(), userId, type, consentDefs[type]?.doc, consentDefs[type]?.version ?? '1', granted ? 1 : 0]));
     });
     await _startSession(userId, remember: true);
     return userId;

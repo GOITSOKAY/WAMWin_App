@@ -9,8 +9,13 @@ const SCREENS = {
   settings: () => import('../screens/settings.js'),
   match: () => import('../screens/match.js'),
   inventory: () => import('../screens/inventory.js'),
+  privacy: () => import('../screens/privacy.js'),
+  legal: () => import('../screens/legal.js'),
+  voice: () => import('../screens/voice.js'),
 };
 export const PUBLIC = new Set(['welcome', 'login', 'register']);
+// Open to everyone, signed in or not (legal notices must be readable before an account exists).
+export const OPEN = new Set(['legal']);
 // Hosted single-file preview: navigation is kept in memory (the host page owns the URL fragment).
 const memory = !!window.__WAMWINS_SINGLE_FILE__;
 let memPath = '';

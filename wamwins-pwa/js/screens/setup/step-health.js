@@ -4,9 +4,13 @@ import { REF } from '../../inquiry/reference.js';
 import { RELATIONSHIPS, AGE_BANDS, ALLERGENS, DIETS, HEALTH_GOALS, MEAL_CONTEXTS } from '../../inquiry/questions.js';
 import { infoButton, labelWithInfo } from '../../components/info.js';
 import { autocomplete, searchList } from '../../components/autocomplete.js';
+import { askConsent, hasConsent, latestConsent } from '../../privacy/consent.js';
+import { isMinor } from '../../privacy/access.js';
 
 // Module 2 - Health Profiles. Structured data only (allergies, intolerances, diets, health goals, foods to avoid /
 // prioritize, per-meal rules), stored in separate tables, and only with consent. Not a medical diagnosis.
+// Consent pop-ups: HEALTH_DATA_PROCESSING when the person first says Yes (just in time), then, at Continue, one
+// CHILD_PROFILE (parent/guardian) or ADULT_ON_BEHALF confirmation per other person whose details are entered.
 const YES_NO = [{ code: 'YES', name: 'Yes' }, { code: 'NO', name: 'No' }];
 const foodsAndGroups = [...REF.items.map(i => ({ name: i.name, itemId: i.id })), ...REF.foodCategories.map(c => ({ name: c.name, categoryCode: c.code, group: true }))];
 const blankPerson = (o) => ({ key: crypto.randomUUID(), name: '', relationship: 'CHILD', ageBand: 'CHILD', isMe: false, allergies: [], intolerances: [], diets: [], health: [],
@@ -16,9 +20,13 @@ const hasData = (p) => p.allergies.length + p.intolerances.length + p.diets.leng
 
 export async function create({ draft, user, session, refresh }) {
   const hs = draft.health;
-  hs.consent ??= (await tx(['consent_record'], 'readonly', t => t.byIndex('consent_record', 'user_id', user.id)))
-    .filter(c => c.consent_type === 'HEALTH_DATA_PROCESSING').sort((a, b) => a.recorded_at.localeCompare(b.recorded_at)).at(-1)?.granted ?? false;
-  const consentAtStart = hs.consent;
+  hs.consent = await hasConsent(user.id, 'HEALTH_DATA_PROCESSING');    // the ledger decides, never a cached draft flag
+  const subjectRef = (p) => p.existingId ?? p.key;
+  const onBehalfType = (p) => isMinor({ age_band: p.ageBand }) ? 'CHILD_PROFILE' : 'ADULT_ON_BEHALF';
+  async function askHealth() {
+    hs.consent = await askConsent(user.id, 'HEALTH_DATA_PROCESSING');
+    draw(); refresh();
+  }
   const known = session.household_id ? (await tx(['family_member'], 'readonly', t => t.byIndex('family_member', 'household_id', session.household_id))).filter(m => !m.deleted_at) : [];
   const editor = h('div');
   const disposers = [];
@@ -56,10 +64,10 @@ export async function create({ draft, user, session, refresh }) {
       p.isMe ? null : field({ label: 'Name', input: nameIn }),
       p.isMe ? null : h('div', { class: 'field' }, h('span', { class: 'label', text: 'Relationship' }), chips(RELATIONSHIPS.filter(r => r.code !== 'SELF'), [p.relationship], v => { p.relationship = v.at(-1) ?? p.relationship; draw(); })),
       h('div', { class: 'field' }, h('span', { class: 'label', text: 'Age group' }), chips(AGE_BANDS, [p.ageBand], v => { p.ageBand = v.at(-1) ?? p.ageBand; draw(); })),
-      sec('Allergies', h('p', { class: 'hint', text: 'Recipes with these are never suggested.' }), chips(ALLERGENS, p.allergies, v => { p.allergies = v; refresh(); }, { warn: true })),
+      sec('Allergies', h('p', { class: 'hint', text: 'Recipes listing these ingredients are left out of suggestions. Always check product labels.' }), chips(ALLERGENS, p.allergies, v => { p.allergies = v; refresh(); }, { warn: true })),
       sec('Intolerances', h('p', { class: 'hint', text: 'Foods that cause discomfort (for example lactose).' }), chips(ALLERGENS, p.intolerances, v => { p.intolerances = v; refresh(); }, { warn: true })),
       sec('Dietary requirements', chips(DIETS, p.diets, v => { p.diets = v; refresh(); })),
-      sec('Health-related food requirements', h('p', { class: 'hint', text: 'Used to rank meals, not to give medical advice.' }), chips(HEALTH_GOALS, p.health, v => { p.health = v; refresh(); })),
+      sec('Health-related food requirements', h('p', { class: 'hint', text: 'Food preferences used to rank meal ideas. WAMWins does not give medical advice; follow your clinician’s guidance.' }), chips(HEALTH_GOALS, p.health, v => { p.health = v; refresh(); })),
       sec('Foods to avoid', tagInput(`hp-${p.key}-avoid`, 'Add a food or food group to avoid', p.avoid)),
       sec('Foods to prioritize', tagInput(`hp-${p.key}-pri`, 'Add a food or food group to prioritize', p.prioritize)),
       h('div', { class: 'meal-contexts' }, h('h3', { class: 'with-info' }, h('span', { text: 'By meal' }),
@@ -82,12 +90,10 @@ export async function create({ draft, user, session, refresh }) {
     disposers.splice(0).forEach(d => d());
     clear(editor);
     if (hs.needed !== 'YES') return;
-    const consent = h('input', { type: 'checkbox', id: 'hp-consent', checked: hs.consent === true });
-    consent.onchange = () => { hs.consent = consent.checked; draw(); };
-    editor.append(h('section', { class: 'q-block' },
-      h('label', { class: 'check' }, consent, h('span', {}, h('b', { style: { fontWeight: 500 }, text: 'Use these health details to keep meal suggestions safe' }),
-        h('span', { class: 'hint', style: { display: 'block' }, text: 'Stored only on your household’s records, visible only to members you allow. Turn this off or change the details any time. This is not a medical diagnosis.' }))),
-      hs.consent ? null : h('p', { class: 'hint', text: 'Without this, WAMWins won’t store health details. You can continue and add them later.' })));
+    editor.append(h('section', { class: 'q-block consent-status-line', id: 'hp-consent-status' }, hs.consent
+      ? h('p', { class: 'hint' }, icon('shield', 18), h('span', { text: ' You agreed to let WAMWins save these health details. Only you and the people you choose can see them. Withdraw or choose who can see them in Settings › Privacy & sharing.' }))
+      : h('div', { class: 'stack-s' }, h('p', { text: 'Health details won’t be saved without your permission. You can continue without them and add them later.' }),
+        h('button', { type: 'button', class: 'btn btn-ghost', id: 'hp-consent-ask', text: 'Review and give permission', onclick: askHealth }))));
     if (!hs.consent) return;
     editor.append(h('section', { class: 'q-block' }, h('h2', { text: 'People who need special dietary management' }),
       ...hs.people.map(personCard), addPersonPicker()));
@@ -95,9 +101,14 @@ export async function create({ draft, user, session, refresh }) {
 
   const el = h('div', {},
     h('section', { class: 'q-block' },
-      labelWithInfo('Does anyone in your household require special dietary management?', { title: 'Why we ask', body: ['Allergies, intolerances and diets decide which meals are safe to suggest. Allergies are always a hard stop.',
-        'Health details are optional, stored separately from your kitchen, and only with your permission. WAMWins does not diagnose or give medical advice.'] }),
-      choices(YES_NO, hs.needed, v => { hs.needed = v; if (v === 'YES' && hs.consent === false && !consentAtStart) hs.consent = false; draw(); refresh(); })),
+      labelWithInfo('Does anyone in your household require special dietary management?', { title: 'Why we ask', body: ['Allergies, intolerances and diets decide which meal ideas are left out. A recipe listing a saved allergen is never suggested.',
+        'Health details are optional, stored separately from your kitchen, and saved only with your permission. You choose who else can see them and for how long.',
+        'WAMWins is not a medical device and does not diagnose, treat or give medical advice. Always check product labels.'] }),
+      choices(YES_NO, hs.needed, async v => {
+        const asked = !!(await latestConsent(user.id, 'HEALTH_DATA_PROCESSING'));
+        hs.needed = v; draw(); refresh();
+        if (v === 'YES' && !hs.consent && !asked) await askHealth();     // just-in-time pop-up, asked once; the button above re-opens it
+      })),
     editor);
   draw();
   return {
@@ -112,10 +123,17 @@ export async function create({ draft, user, session, refresh }) {
       hs.people.forEach(p => { p.name = p.name.trim(); });
       return null;
     },
-    afterSave: async () => {
-      if ((hs.consent === true) !== (consentAtStart === true))
-        await tx(['consent_record'], 'readwrite', t => t.add('consent_record', { id: crypto.randomUUID(), user_id: user.id, consent_type: 'HEALTH_DATA_PROCESSING',
-          document_version: '1', granted: hs.consent === true, recorded_at: new Date().toISOString() }));
+    // Before saving: the person confirms they may share each other person's details (parent/guardian, or with permission).
+    confirm: async () => {
+      if (hs.needed !== 'YES' || !hs.consent) return true;
+      for (const p of hs.people.filter(p => !p.isMe && hasData(p))) {
+        const type = onBehalfType(p);
+        if (await hasConsent(user.id, type, subjectRef(p))) continue;
+        if (!(await askConsent(user.id, type, { subjectRef: subjectRef(p), subjectName: p.name }))) {
+          return `${p.name}’s details can’t be saved without your confirmation. Confirm, or remove ${p.name}’s profile.`;
+        }
+      }
+      return true;
     },
     dispose: () => disposers.forEach(d => d()),
   };

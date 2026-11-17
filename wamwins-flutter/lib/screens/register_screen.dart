@@ -5,6 +5,7 @@ import '../app/theme.dart';
 import '../security/auth_service.dart';
 import '../ui/widgets.dart';
 import 'auth_layout.dart';
+import '../privacy/consent_dialog.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -14,7 +15,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _name = TextEditingController(), _email = TextEditingController(), _pw = TextEditingController();
-  bool _terms = false, _health = false, _busy = false;
+  bool _age = false, _terms = false, _privacy = false, _busy = false;   // nothing pre-ticked; health consent is asked just in time
   String? _nameErr, _emailErr, _pwErr, _formErr;
   PasswordStrength _strength = passwordStrength('');
 
@@ -34,13 +35,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _nameErr = _name.text.trim().isEmpty ? 'Enter your name.' : null;
       _emailErr = validEmail(_email.text) ? null : 'Enter a valid email address, like name@example.com.';
       _pwErr = strength.score >= 2 ? null : strength.message;
-      if (_nameErr == null && _emailErr == null && _pwErr == null && !_terms) _formErr = 'Please accept the Terms of Use and Privacy Policy to create an account.';
+      if (_nameErr == null && _emailErr == null && _pwErr == null) {
+        _formErr = !_age ? 'WAMWins accounts are for adults 18 and older. A parent or guardian can add children to a household.'
+            : (!_terms || !_privacy) ? 'Please agree to the Terms of Use and confirm you have read the Privacy Notice to create an account.' : null;
+      }
     });
     if (_nameErr != null || _emailErr != null || _pwErr != null || _formErr != null) return;
     setState(() => _busy = true);
     try {
       await s.auth.register(name: _name.text, email: _email.text, password: _pw.text,
-          consents: {'TERMS': true, 'PRIVACY_POLICY': true, 'HEALTH_DATA_PROCESSING': _health});
+          consents: {'AGE_18_PLUS': true, 'TERMS': true, 'PRIVACY_POLICY': true});
       s.router.reset('setup/about');
     } on AuthException catch (e) {
       setState(() { _formErr = e.message; _busy = false; });
@@ -74,18 +78,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
             backgroundColor: p.surface2, color: meterColor, semanticsLabel: 'Password strength')),
       ])),
       const SizedBox(height: 8),
+      CheckboxListTile(value: _age, onChanged: (v) => setState(() => _age = v ?? false), contentPadding: EdgeInsets.zero,
+          controlAffinity: ListTileControlAffinity.leading, title: const Text('I am 18 or older.')),
       CheckboxListTile(value: _terms, onChanged: (v) => setState(() => _terms = v ?? false), contentPadding: EdgeInsets.zero,
-          controlAffinity: ListTileControlAffinity.leading, title: const Text('I agree to the WAMWins Terms of Use and Privacy Policy.')),
-      CheckboxListTile(value: _health, onChanged: (v) => setState(() => _health = v ?? false), contentPadding: EdgeInsets.zero,
-          controlAffinity: ListTileControlAffinity.leading,
-          title: const Text('Use my family’s allergies and diets to keep meal suggestions safe.'),
-          subtitle: const Text('Optional. You can change this later.')),
+          controlAffinity: ListTileControlAffinity.leading, title: const Text('I agree to the Terms of Use.'),
+          subtitle: Align(alignment: Alignment.centerLeft, child: TextButton(onPressed: () => showLegalDoc(context, 'TERMS'), child: const Text('Read the Terms of Use')))),
+      CheckboxListTile(value: _privacy, onChanged: (v) => setState(() => _privacy = v ?? false), contentPadding: EdgeInsets.zero,
+          controlAffinity: ListTileControlAffinity.leading, title: const Text('I have read the Privacy Notice and the Consumer Health Data Privacy Policy.'),
+          subtitle: Wrap(children: [TextButton(onPressed: () => showLegalDoc(context, 'PRIVACY_NOTICE'), child: const Text('Privacy Notice')),
+            TextButton(onPressed: () => showLegalDoc(context, 'CONSUMER_HEALTH_DATA_POLICY'), child: const Text('Consumer Health Data Policy'))])),
+      Text('We never sell your information or use it for ads. We ask for separate permission before saving any health or allergy details.', style: Theme.of(context).textTheme.bodySmall),
       const SizedBox(height: 8),
       ErrorBanner(_formErr),
       const SizedBox(height: 12),
       PrimaryButton(label: _busy ? 'Creating account…' : 'Create account', busy: _busy, onPressed: _submit),
       const SizedBox(height: 10),
-      Text('Your account is saved securely on this device.', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
+      Text('Your account is stored on this device and protected by your password.', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
+      const LegalLinks(),
       const SizedBox(height: 8),
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text('Already have an account?', style: TextStyle(color: p.text2)),

@@ -85,7 +85,7 @@ export async function create({ draft, session, refresh }) {
       s.onchange = () => { f[key] = s.value || null; }; return field({ label, input: s }); };
     const pkgUnit = h('select', { class: 'input', id: `fd-pkgunit-${f.key}` }, [h('option', { value: '', text: '—' }), ...unitsFor(f.unit, imperial).map(u => h('option', { value: u.code, selected: u.code === f.packageUnit, text: unitLabel(u) }))]);
     pkgUnit.onchange = () => { f.packageUnit = pkgUnit.value || null; };
-    const dateInfo = infoButton({ label: 'Dates', title: 'Food dates', body: ['Best-by: quality is best before this date; usually still safe after. Use-by: use it by this date for safety or quality.',
+    const dateInfo = infoButton({ label: 'Dates', title: 'Food dates', body: ['Best-by: the maker’s date for best quality. Use-by: the last date the maker recommends using it. Always follow the label and storage instructions.',
       'Expiration: the last date the maker says to use it. WAMWins reminds you about the earliest of these.'] });
     return h('article', { class: 'food-row', 'aria-label': f.name },
       h('div', { class: 'member-head' }, h('div', { class: 'who' }, h('b', { text: f.name }), h('span', { class: 'hint', text: [place?.label, o.sections.find(x => x.key === f.sectionKey)?.name].filter(Boolean).join(' › ') })),

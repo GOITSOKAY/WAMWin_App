@@ -7,7 +7,7 @@ import { REF } from './reference.js';
 export const QUESTIONNAIRE = { code: 'HOUSEHOLD_PROFILE', version: 2 };
 export const STEPS = [
   { id: 'about', title: 'About You', lead: 'A few questions about you and your household, so WAMWins fits the way your home runs.', section: 'USER' },
-  { id: 'health', title: 'Health Profiles', lead: 'Dietary needs help keep meal suggestions safe for everyone at your table.', section: 'HEALTH' },
+  { id: 'health', title: 'Health Profiles', lead: 'Saved food needs help WAMWins leave out meal ideas that don’t fit the people at your table. Optional, and saved only with your permission.', section: 'HEALTH' },
   { id: 'kitchens', title: 'Kitchens & Storages', lead: 'Add each kitchen and where you keep food. WAMWins sets up only what you choose.', section: 'KITCHEN' },
   { id: 'appliances', title: 'Kitchen Appliances', lead: 'Tick the appliances you have. Details are optional and can be added any time.', section: 'EQUIPMENT' },
   { id: 'kitchenware', title: 'Utensils & Kitchenware', lead: 'Tick what you have and how many. You can skip this and add it later.', section: 'EQUIPMENT' },

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../core/db.dart';
+import '../privacy/privacy_service.dart';
 import '../core/ids.dart';
 import '../tier/capabilities.dart';
 import 'adapter.dart';
@@ -101,10 +102,8 @@ class ProfileStore {
     });
   }
 
-  bool healthConsentGranted(String userId) =>
-      (db.first("SELECT granted FROM consent_record WHERE user_id = ? AND consent_type = 'HEALTH_DATA_PROCESSING' ORDER BY recorded_at DESC, rowid DESC LIMIT 1", [userId])?['granted'] as int? ?? 0) == 1;
-  void recordHealthConsent(String userId, bool granted) => db.run(
-      "INSERT INTO consent_record(id, user_id, consent_type, document_version, granted) VALUES (?, ?, 'HEALTH_DATA_PROCESSING', '1', ?)", [newId(), userId, granted ? 1 : 0]);
+  // The consent ledger decides (current document version). Recording happens in the consent pop-up (privacy/consent_dialog.dart).
+  bool healthConsentGranted(String userId) => PrivacyService(db).hasConsent(userId, 'HEALTH_DATA_PROCESSING');
 }
 
 /// Entry Module v2 persistence (questionnaire HOUSEHOLD_PROFILE v2). The v2 draft lives beside the v1 draft

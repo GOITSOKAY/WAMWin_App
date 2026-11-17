@@ -3,6 +3,9 @@ import { loadHousehold } from '../inquiry/provisioning.js';
 import { tx } from '../data/db.js';
 import { REF } from '../inquiry/reference.js';
 import { canUse } from '../tier/capabilities.js';
+import { loadGrants, relation, logView } from '../privacy/access.js';
+import { infoButton } from '../components/info.js';
+import { voiceButton } from '../voice/entry.js';
 
 const greet = () => { const hr = new Date().getHours(); return hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening'; };
 const MODULE_NAMES = { HOUSEHOLD: 'Household', KITCHEN: 'Kitchens', EQUIPMENT: 'Appliances & tools', FAMILY: 'Family', HEALTH: 'Health & diet',
@@ -28,20 +31,28 @@ export async function mount(root, ctx) {
           items.map(it => h('div', { class: 'sec' }, h('span', { text: itemName(it) }), h('span', { text: `${it.quantity} ${(REF.units.find(u => u.code === it.unit_code)?.symbol) || ''}` }))));
       }) : h('p', { class: 'hint', text: 'No storage in this kitchen.' })));
   }));
+  // Person-level privacy: health tags show only for yourself, profiles you manage, or through an active access grant.
+  const grants = await loadGrants(m.household_id);
+  const rel = (mem, category) => relation({ userId: ctx.user.id, membership: m, member: mem, grants, category });
+  logView(m.household_id, ctx.user.id, d.members.filter(x => rel(x, 'ALLERGIES') === 'GRANT' || rel(x, 'DIETS') === 'GRANT'), grants, ['ALLERGIES', 'DIETS']).catch(() => {});
+  const hiddenNote = (mem) => h('span', { class: 'tag muted private-tag' }, icon('lock', 12), h('span', { text: ' Health details private' }),
+    infoButton({ label: `Why ${mem.display_name}’s details are hidden`, title: 'Viewing by permission', body: [`${mem.display_name}’s food and health details are private.`,
+      'They (or the person who manages their profile) can give you access in Settings › Privacy & sharing, for a set time. Meal matching still respects their needs.'] }));
   d.members.sort((a, b) => (b.linked_user_id === ctx.user.id) - (a.linked_user_id === ctx.user.id) || a.created_at.localeCompare(b.created_at));
   const family = h('div', { class: 'stack-s' }, d.members.map(mem => h('div', { class: 'member-head' },
     h('span', { class: 'avatar', 'aria-hidden': 'true', text: mem.display_name.split(/\s+/).map(p => p[0]).slice(0, 2).join('').toUpperCase() }),
     h('div', { class: 'who' }, h('b', { text: mem.display_name }),
       h('div', { class: 'chips', style: { gap: '4px', marginTop: '4px' } },
-        ...d.allergies.filter(a => a.member_id === mem.id).map(a => h('span', { class: 'tag danger', text: `No ${allergenName(a.allergen_code).toLowerCase()}` })),
-        ...d.diets.filter(a => a.member_id === mem.id).map(a => h('span', { class: 'tag blue', text: dietName(a.dietary_pattern_code) })))))));
+        ...(rel(mem, 'ALLERGIES') ? d.allergies.filter(a => a.member_id === mem.id).map(a => h('span', { class: 'tag danger', text: `No ${allergenName(a.allergen_code).toLowerCase()}` })) : []),
+        ...(rel(mem, 'DIETS') ? d.diets.filter(a => a.member_id === mem.id).map(a => h('span', { class: 'tag blue', text: dietName(a.dietary_pattern_code) })) : []),
+        ...(!rel(mem, 'ALLERGIES') || !rel(mem, 'DIETS') ? [hiddenNote(mem)] : []))))));
   const ORDER = Object.keys(MODULE_NAMES);
   const canMatch = d.members.length > 0 && await canUse(m.household_id, 'MEAL_MATCHING');      // capability, never "which tier?"
   const inventoryBtn = (await canUse(m.household_id, 'MANUAL_INVENTORY'))
     ? h('button', { type: 'button', class: 'btn btn-ghost btn-block inventory-btn', onclick: () => ctx.go('inventory') }, icon('box', 20), h('span', { text: 'Open inventory' })) : null;
   const matchCta = canMatch ? h('section', { class: 'match-cta' },
     h('span', { class: 'ico' }, icon('chef')),
-    h('p', { text: 'Find meals that are safe for everyone and use what you have.' }),
+    h('p', { text: 'Find meal ideas that fit everyone’s saved food needs and use what you have.' }),
     h('button', { type: 'button', class: 'btn btn-primary', text: 'What can we cook?', onclick: () => ctx.go('match') })) : null;
   const mods = d.modules.filter(x => !x.resource_id && ORDER.includes(x.module_code)).sort((a, b) => ORDER.indexOf(a.module_code) - ORDER.indexOf(b.module_code));
 
@@ -49,6 +60,7 @@ export async function mount(root, ctx) {
     h('header', { class: 'topbar' },
       h('span', { class: 'brand' }, brandLogo('bar'), h('span', { class: 'brand-text', 'aria-hidden': 'true' }, wordmark())),
       h('span', { class: 'spacer' }),
+      await voiceButton(ctx),                                     // null in WAMWins Basic (VOICE_COMMANDS disabled)
       h('button', { type: 'button', class: 'icon-btn', 'aria-label': 'Settings', onclick: () => ctx.go('settings') }, icon('settings'))),
     h('main', { class: 'content wide', id: 'main' },
       h('div', { class: 'hello' }, h('p', { class: 'hello-name', text: `${greet()}, ${ctx.user.display_name.split(/\s+/)[0]}` }),

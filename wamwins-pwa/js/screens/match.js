@@ -6,6 +6,7 @@ import { rankRecipes, ENGINE_VERSION } from '../matching/engine.js';
 import { UnitConverter } from '../matching/units.js';
 import { buildInputs } from '../matching/inputs.js';
 import { loadSnapshot, saveRun, confirmMeal } from '../matching/store.js';
+import { loadGrants, relation } from '../privacy/access.js';
 
 // "What can we cook?" - same screen and behaviour as the Flutter app. This module, the engine and the recipe
 // data load only when the screen opens, and are released when it closes.
@@ -18,6 +19,11 @@ export async function mount(root, ctx) {
   if (!m || !(await canUse(m.household_id, 'MEAL_MATCHING'))) { ctx.go('home', true); return { dispose() {} }; }   // capability gate, never "which tier?"
   const hh = m.household_id;
   const units = new UnitConverter(MATCH_REF);
+  // Matching uses everyone's saved needs (that is how it leaves out unsuitable recipes), but explanations reveal a
+  // person's specific details only to people allowed to see them.
+  const grants = await loadGrants(hh);
+  const canSee = (memberId, category) => !memberId || !!relation({ userId: ctx.user.id, membership: m, member: snapshot.members.find(x => x.id === memberId), grants, category });
+  const REASON_CATEGORY = { ALLERGEN: 'ALLERGIES', INTOLERANCE: 'ALLERGIES', DIETARY: 'DIETS', HEALTH_RULE: 'HEALTH_GOALS' };
   let snapshot = await loadSnapshot(hh);
   const members = snapshot.members.filter(x => !x.deleted_at && x.is_active !== false)
     .sort((a, b) => (b.linked_user_id === ctx.user.id) - (a.linked_user_id === ctx.user.id) || a.created_at.localeCompare(b.created_at));
@@ -61,13 +67,14 @@ export async function mount(root, ctx) {
   function render(list, excluded) {
     clear(results);
     results.append(
-      h('h2', { text: list.length ? 'Suggested for you' : 'No safe matches yet' }),
+      h('h2', { text: list.length ? 'Suggested for you' : 'No matches yet' }),
       h('p', { class: 'hint', text: list.length ? 'Ranked by what you already have, what needs using soon, and your family’s preferences.'
-        : 'Nothing fits everyone with what you have. Try fewer people, another meal, or add food to your inventory.' }));
+        : 'Nothing fits everyone’s saved food needs with what you have. Try fewer people, another meal, or add food to your inventory.' }));
     for (const r of list) {
       const card = h('article', { class: `match-card${r.rank === 1 ? ' best' : ''}`, 'aria-label': r.title });
       const actions = h('div', { class: 'match-actions' });
-      const soft = factor(r, 'HEALTH_RULE'), pref = factor(r, 'PREFERENCE');
+      const allVisible = [...selected].every(id => canSee(id, 'HEALTH_GOALS') && canSee(id, 'MEAL_PREFERENCES'));
+      const soft = allVisible ? factor(r, 'HEALTH_RULE') : '', pref = allVisible ? factor(r, 'PREFERENCE') : '';
       append(card, [
         h('div', { class: 'match-head' }, h('h3', { text: r.title }), r.rank === 1 ? h('span', { class: 'tag blue', text: 'Best match' }) : null),
         line('shield', 'ok', factor(r, 'SAFETY')),
@@ -103,7 +110,9 @@ export async function mount(root, ctx) {
       h('summary', { text: `Not suggested (${excluded.length})` }),
       h('div', {}, h('p', { class: 'hint', text: 'Why some recipes were left out' }), excluded.map(e => h('div', { class: 'excluded' },
         h('b', { text: MATCH_REF.recipes.find(x => x.id === e.recipeId)?.title ?? 'Recipe' }),
-        h('span', { class: ['ALLERGEN', 'INTOLERANCE'].includes(e.reason) ? 'danger' : '', text: `${REASONS[e.reason] ?? e.reason}: ${e.detail}` }))))));
+        canSee(e.memberId, REASON_CATEGORY[e.reason])
+          ? h('span', { class: ['ALLERGEN', 'INTOLERANCE'].includes(e.reason) ? 'danger' : '', text: `${REASONS[e.reason] ?? e.reason}: ${e.detail}` })
+          : h('span', { class: 'muted', text: `Doesn’t fit a saved food need for ${snapshot.members.find(x => x.id === e.memberId)?.display_name ?? 'someone'} (details private)` }))))));
     results.querySelector('h2')?.focus?.();
   }
 

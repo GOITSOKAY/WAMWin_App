@@ -39,7 +39,7 @@ export function newFoodForm({ title = 'Add a new food', hint = 'It’s saved as 
       h('label', { class: 'mini' }, h('span', { text: 'Usually kept' }), zone)),
     lockUnit ? h('p', { class: 'hint', text: 'The unit can’t change while this food is in stock.' }) : null,
     h('div', { class: 'field' }, h('span', { class: 'label', text: 'Does it contain any of these? (optional)' }),
-      h('p', { class: 'hint', text: 'Helps keep meal suggestions safe for people with allergies.' }), chipRow),
+      h('p', { class: 'hint', text: 'Helps WAMWins leave this food out for people with a matching allergy. Always check the product label.' }), chipRow),
     err,
     h('div', { class: 'row' }, save, h('button', { type: 'button', class: 'btn-text', text: 'Cancel', onclick: onCancel })));
   setTimeout(() => nameIn.focus(), 0);

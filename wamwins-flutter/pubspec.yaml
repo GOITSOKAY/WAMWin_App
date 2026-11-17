@@ -23,6 +23,9 @@ dependencies:
   # Manual reference photos (Basic): take/choose a photo, and save/share it. Never analyzed.
   image_picker: ">=1.1.2 <2.0.0"
   share_plus: ">=10.0.0 <12.0.0"
+  # Voice commands (higher tier only; started only when VOICE_COMMANDS is entitled and consented). On-device
+  # recognition is requested; no audio is stored.
+  speech_to_text: ">=7.0.0 <8.0.0"
   # NFKC normalisation of passwords/passphrases, as on the web client.
   unorm_dart: ">=0.2.0 <1.0.0"
 

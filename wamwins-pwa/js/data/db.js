@@ -42,6 +42,14 @@ const MIGRATIONS = [
     for (const name of ['member_intolerance', 'member_food_rule', 'household_kitchenware', 'household_container', 'location_media', 'media_blob'])
       db.createObjectStore(name, { keyPath: 'id' }).createIndex('household_id', 'household_id');
   },
+  /* v5: privacy - access grants with expiry, access log (accounting of disclosures), privacy requests. Additive. */
+  (db) => {
+    const g = db.createObjectStore('privacy_access_grant', { keyPath: 'id' });
+    g.createIndex('household_id', 'household_id'); g.createIndex('grantee_user_id', 'grantee_user_id'); g.createIndex('subject_member_id', 'subject_member_id');
+    db.createObjectStore('privacy_access_log', { keyPath: 'id' }).createIndex('household_id', 'household_id');
+    const r = db.createObjectStore('privacy_request', { keyPath: 'id' });
+    r.createIndex('user_id', 'user_id'); r.createIndex('household_id', 'household_id');
+  },
 ];
 export const DB_VERSION = MIGRATIONS.length;
 

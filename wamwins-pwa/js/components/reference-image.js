@@ -1,6 +1,7 @@
 import { h, icon, clear, toast, field } from '../core/dom.js';
 import { tx } from '../data/db.js';
 import { openInfo, infoButton } from './info.js';
+import { hasConsent, askConsent } from '../privacy/consent.js';
 
 /**
  * Manual reference photos (ACTIVE in WAMWins Basic): take or choose a photo of a kitchen, storage unit, section,
@@ -73,6 +74,8 @@ export function referencePhotos({ hh, userId, locationKey, locationName, onChang
     const save = h('button', { type: 'button', class: 'btn btn-primary', text: 'Save photo' });
     const preview = URL.createObjectURL(file); urls.push(preview);
     save.onclick = async () => {
+      // Consent before the first reference photo (MEDIA_PROCESSING); asked once, re-asked only for a new notice version.
+      if (!(await hasConsent(userId, 'MEDIA_PROCESSING')) && !(await askConsent(userId, 'MEDIA_PROCESSING'))) { toast('The photo was not saved.'); return; }
       save.disabled = true;
       const [full, thumb] = await Promise.all([shrink(file, MAX), shrink(file, THUMB, 0.7)]);
       const id = crypto.randomUUID(), blobId = crypto.randomUUID(), thumbId = crypto.randomUUID();
