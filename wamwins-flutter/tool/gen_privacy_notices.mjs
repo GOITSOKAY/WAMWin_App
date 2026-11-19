@@ -13,7 +13,7 @@ out.push('class ConsentDef { const ConsentDef(this.type, this.doc, this.version,
 out.push('  final String type, doc, version, title, lead, check, agree, decline; final List<String> list; }');
 out.push('class AccessCategory { const AccessCategory(this.code, this.name); final String code, name; }');
 out.push('class AccessDuration { const AccessDuration(this.code, this.name, this.days); final String code, name; final int? days; }');
-out.push(`const legal = (operator: ${q(N.LEGAL.operator)}, product: ${q(N.LEGAL.product)}, contactEmail: ${q(N.LEGAL.contactEmail)}, postalAddress: ${q(N.LEGAL.postalAddress)}, effective: ${q(N.LEGAL.effective)}, version: ${q(N.LEGAL.version)});`);
+out.push(`const legal = (operator: ${q(N.LEGAL.operator)}, product: ${q(N.LEGAL.product)}, legalName: ${q(N.LEGAL.legalName)}, governingLaw: ${q(N.LEGAL.governingLaw)}, contactEmail: ${q(N.LEGAL.contactEmail)}, supportEmail: ${q(N.LEGAL.supportEmail)}, postalAddress: ${q(N.LEGAL.postalAddress)}, effective: ${q(N.LEGAL.effective)}, version: ${q(N.LEGAL.version)});`);
 out.push('const legalDocs = <String, LegalDoc>{');
 for (const [code, d] of Object.entries(N.DOCS)) out.push(`  ${q(code)}: LegalDoc(${q(code)}, ${q(d.title)}, ${q(d.version)}, [\n${d.sections.map(s => `    LegalSection(${s.h ? q(s.h) : 'null'}, ${list(s.p)}, ${list(s.list)}),`).join('\n')}\n  ]),`);
 out.push('};');

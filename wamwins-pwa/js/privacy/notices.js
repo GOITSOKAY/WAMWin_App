@@ -2,14 +2,18 @@
 // the exact text shown, so it is always provable what a person agreed to. Material changes = new version =
 // people are asked again. Same texts in the Flutter app (lib/privacy/notices.dart): CLIENT_CONFORMANCE rule P1.
 //
-// DRAFT FOR LEGAL REVIEW. Items in [brackets] must be completed by WAM Digital before public launch.
+// DRAFT FOR LEGAL REVIEW. Operator: GOITSOKAY, LLC, doing business as DigitalDevWizard (West Palm Beach, Florida).
+// Version 2026-11-19 names the operator and governing law: a material change, so consents are asked again.
 export const LEGAL = {
-  operator: 'WAM Digital',
+  operator: 'DigitalDevWizard',                // trade name (dba) used in the texts
+  legalName: 'GOITSOKAY, LLC',                 // the legal entity that contracts with users
+  governingLaw: 'the State of Florida, USA',
   product: 'WAMWins',
-  contactEmail: '[privacy contact email]',
-  postalAddress: '[mailing address]',
-  effective: 'November 16, 2026',
-  version: '2026-11-16',
+  contactEmail: 'admin@wamwins.com',          // privacy, legal and data requests
+  supportEmail: 'support@wamwins.com',        // help with the app
+  postalAddress: '4122 Pot O Gold Street, West Palm Beach, FL 33406, USA',
+  effective: 'November 19, 2026',
+  version: '2026-11-19',
 };
 
 const C = LEGAL;
@@ -18,7 +22,7 @@ export const DOCS = {
   PRIVACY_NOTICE: {
     title: 'Privacy Notice', version: C.version,
     sections: [
-      { p: [`Effective ${C.effective}. This notice explains how ${C.operator} (“we”) collects, uses, shares and protects personal information in ${C.product}, and the choices and rights you have.`] },
+      { p: [`Effective ${C.effective}. This notice explains how ${C.legalName}, doing business as ${C.operator} (“${C.operator}”, “we”), collects, uses, shares and protects personal information in ${C.product}, and the choices and rights you have.`] },
       { h: 'Information we collect', list: [
         'Account details: your name, email address and a protected one-way code of your password (never the password itself).',
         'Household details: the household name, the people you add (names, relationship, age group) and who does the cooking.',
@@ -60,7 +64,7 @@ export const DOCS = {
       { h: 'Voice commands', p: ['Voice commands are an optional feature in some plans. They are off until you turn them on and agree. When your device supports it, speech is recognized on the device. Otherwise your device’s speech service turns the audio into text; that service is provided by your browser or phone maker under their own privacy terms. WAMWins does not keep recordings, does not create voiceprints and does not identify people by their voice.'] },
       { h: 'State privacy rights', p: ['Residents of California, Washington, Nevada, Colorado, Connecticut, Virginia, Texas, Oregon and other states with consumer privacy laws have the rights described above. California residents: we collect the categories listed in this notice, including sensitive personal information (health), only to provide the service you request; we do not sell or share it. Washington and Nevada residents: see the Consumer Health Data Privacy Policy.'] },
       { h: 'Changes', p: ['If we change this notice in a way that matters, we will tell you in the app before the change applies and ask for your consent again where the law requires.'] },
-      { h: 'Contact', p: [`${C.operator}, ${C.postalAddress}. Email: ${C.contactEmail}.`] },
+      { h: 'Contact', p: [`${C.legalName} (${C.operator}), ${C.postalAddress}. Email: ${C.contactEmail} (privacy) or ${C.supportEmail} (help with the app).`] },
     ],
   },
   CONSUMER_HEALTH_DATA_POLICY: {
@@ -85,7 +89,7 @@ export const DOCS = {
   TERMS: {
     title: 'Terms of Use', version: C.version,
     sections: [
-      { p: [`Effective ${C.effective}. These terms are an agreement between you and ${C.operator} about using ${C.product}.`] },
+      { p: [`Effective ${C.effective}. These terms are an agreement between you and ${C.legalName}, doing business as ${C.operator} (“${C.operator}”, “we”), about using ${C.product}.`] },
       { h: 'Who can use WAMWins', p: ['You must be 18 or older to create an account. You may add profiles for your family, including children, if you are their parent or legal guardian or have their permission.'] },
       { h: 'Not medical advice', list: [
         'WAMWins is a general wellness and household tool. It does not diagnose, treat, cure or prevent any disease and is not a medical device.',
@@ -95,8 +99,9 @@ export const DOCS = {
       { h: 'Using WAMWins responsibly', list: ['Keep your password private and tell us about any unauthorized use.', 'Do not misuse the service, try to access other households’ data, or interfere with its security.'] },
       { h: 'Plans and features', p: ['WAMWins Basic is free. Some features, such as voice commands, are available only in other plans. Platform protections (privacy controls, consent management, data export, account deletion and backup) are included in every plan.'] },
       { h: 'Changes and ending', p: ['We may update these terms and will tell you in the app before material changes apply. You can stop using WAMWins and delete your account at any time.'] },
-      { h: 'Disclaimers', p: ['WAMWins is provided “as is”. To the extent the law allows, WAM Digital is not liable for indirect or consequential damages. Nothing in these terms limits rights you have under consumer protection laws that cannot be waived.'] },
-      { h: 'Contact', p: [`${C.operator}, ${C.postalAddress}. Email: ${C.contactEmail}. Governing law: [state to be confirmed by WAM Digital].`] },
+      { h: 'Disclaimers', p: [`${C.product} is provided “as is”. To the extent the law allows, ${C.legalName} (${C.operator}) is not liable for indirect or consequential damages. Nothing in these terms limits rights you have under consumer protection laws that cannot be waived.`] },
+      { h: 'Governing law', p: [`These terms are governed by the laws of ${C.governingLaw}, without regard to its conflict-of-law rules. Nothing in these terms takes away rights you have under the consumer protection laws of the state where you live.`] },
+      { h: 'Contact', p: [`${C.legalName} (${C.operator}), ${C.postalAddress}. Email: ${C.contactEmail} (legal and privacy) or ${C.supportEmail} (help with the app).`] },
     ],
   },
 };
